@@ -1,65 +1,58 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+// Valores de diseño de FlightManager (paleta del mockup).
+// Todos los estilos de la app leen de acá, así que cambiar un color o un
+// espaciado se hace en un único lugar.
 
-import '@/global.css';
+export const colors = {
+  // Fondos
+  deep: '#0B0F1C',
+  panel: '#121728',
+  card: '#182036',
+  card2: '#1D2540',
+  border: '#262F4A',
 
-import { Platform } from 'react-native';
+  // Texto
+  text: '#F4F6FB',
+  textDim: '#A7B0C8',
+  textFaint: '#5E6A88',
 
-export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
-} as const;
+  // Acentos de estado
+  cyan: '#3FC7F4', // vuelo
+  amber: '#F3A73E', // guardia
+  green: '#3ED598', // libre
+  red: '#F26D6F', // alerta
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+  // Fondos suaves para chips e íconos (acento con ~15% de opacidad)
+  cyanSoft: 'rgba(63, 199, 244, 0.15)',
+  amberSoft: 'rgba(243, 167, 62, 0.15)',
+  greenSoft: 'rgba(62, 213, 152, 0.15)',
+  redSoft: 'rgba(242, 109, 111, 0.15)',
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+  // Texto sobre un fondo de acento (ej: botón cyan)
+  onAccent: '#0B0F1C',
+};
 
-export const Spacing = {
-  half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
-} as const;
+export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 };
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+export const radius = { sm: 8, md: 12, lg: 16, xl: 20, round: 999 };
+
+export const fontSize = { xs: 10, sm: 12, md: 14, lg: 16, xl: 20, xxl: 26 };
+
+// Tonos de estado, para componentes que cambian de color según el caso (Chip, NOTAM, etc.)
+export type Tone = 'cyan' | 'amber' | 'green' | 'red';
+
+export const tones: Record<Tone, { color: string; soft: string }> = {
+  cyan: { color: colors.cyan, soft: colors.cyanSoft },
+  amber: { color: colors.amber, soft: colors.amberSoft },
+  green: { color: colors.green, soft: colors.greenSoft },
+  red: { color: colors.red, soft: colors.redSoft },
+};
+
+// Tiempos de las animaciones (en milisegundos) y desplazamientos.
+export const animation = {
+  duration: 400,
+  stagger: 120,
+  slideOffset: 12,
+  mapLoop: 4000,
+  barDuration: 250,
+  barSlide: 80,
+};
