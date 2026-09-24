@@ -7,6 +7,14 @@ export const stackScreenOptions = {
   contentStyle: { backgroundColor: colors.deep },
 };
 
+// Opciones visuales de los Stacks dentro de una tab (ej: Perfil): header oscuro con flecha de volver.
+export const innerStackScreenOptions = {
+  headerStyle: { backgroundColor: colors.deep },
+  headerTintColor: colors.text,
+  headerShadowVisible: false,
+  contentStyle: { backgroundColor: colors.deep },
+};
+
 // StyleSheet.create conserva los tipos literales (fontWeight, etc.) que <Tabs> necesita;
 // un objeto suelto los generaliza a `string` y ya no matchea.
 const tabBarStyles = StyleSheet.create({
