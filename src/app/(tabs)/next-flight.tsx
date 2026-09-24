@@ -75,16 +75,10 @@ function CrewItem({ item, isLast }: { item: (typeof CREW)[0]; isLast: boolean })
   return (
     <>
       <View style={styles.crewRow}>
-        <View style={styles.avatar}>
-          <Text style={{ color: colors.textDim, fontSize: fontSize.sm, fontWeight: '700' }}>{item.initials}</Text>
-        </View>
         <View style={{ flex: 1 }}>
           <Text style={{ color: colors.text, fontSize: fontSize.md, fontWeight: '600' }}>{item.name}</Text>
           <Text style={{ color: colors.textDim, fontSize: fontSize.sm }}>{item.role}</Text>
         </View>
-        <Pressable style={({ pressed }) => [styles.mailBtn, pressed && common.pressed]}>
-          <Text style={{ color: colors.textDim, fontSize: 16 }}>✉</Text>
-        </Pressable>
       </View>
       {!isLast && <View style={{ height: 1, backgroundColor: colors.border, marginHorizontal: spacing.lg }} />}
     </>
@@ -163,7 +157,6 @@ export default function NextFlightScreen() {
           style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
           onPress={() => router.push('/(tabs)/flight-log')}
         >
-          <Text style={{ fontSize: 18 }}>💬</Text>
           <Text style={{ color: colors.text, fontSize: fontSize.lg, fontWeight: '600' }}>Llenar libro de vuelo</Text>
         </Pressable>
 
