@@ -19,28 +19,28 @@ export const calendar = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  // Texto secundario (contador, horarios, avión)
+  // Texto secundario (contador, horarios, avion)
   label: {
     color: colors.textDim,
     fontSize: fontSize.sm,
     fontWeight: '600',
   },
 
-  // Imagen del calendario (el alto sale del aspectRatio, ver index.tsx)
+  // Imagen del calendario // (el alto sale del aspectRatio, ver index.tsx) -> ya no!
   calendar: {
     width: '100%',
+    height: 450,
     borderRadius: radius.xl,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.md,
   },
 
-  // "LUN · 24 AGOSTO"
   dayLabel: {
     letterSpacing: 1,
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
   },
 
-  // ---------- Tarjeta de vuelo ----------
+  //Tarjeta de vuelo
   card: {
     padding: spacing.lg,
     marginBottom: spacing.sm,
@@ -69,7 +69,7 @@ export const calendar = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
-  // Centro de la ruta: línea + avión + duración
+  // Centro de la ruta: linea + avion + duracion
   routeMiddle: {
     flex: 1,
     alignItems: 'center',
@@ -86,6 +86,7 @@ export const calendar = StyleSheet.create({
   planeIcon: {
     backgroundColor: colors.card,
     paddingHorizontal: spacing.xs,
+    color: colors.cyan
   },
   duration: {
     color: colors.textFaint,

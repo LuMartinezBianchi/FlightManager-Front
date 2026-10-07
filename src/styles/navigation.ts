@@ -1,14 +1,17 @@
-import { StyleSheet } from 'react-native';
 import { colors, fontSize } from '@/constants/theme';
+import { StyleSheet } from 'react-native';
 
-// Opciones visuales del Stack raíz.
+// Opciones visuales del Stack raiz.
 export const stackScreenOptions = {
   headerShown: false,
   contentStyle: { backgroundColor: colors.deep },
 };
 
-// Opciones visuales de los Stacks dentro de una tab (ej: Perfil): header oscuro con flecha de volver.
-export const innerStackScreenOptions = {
+// Opciones visuales de las pantallas que se abren por encima de las tabs (agregar vuelo, editar, etc.):
+// header oscuro con solo la flecha de volver.
+export const headerScreenOptions = {
+  headerShown: true,
+  headerBackButtonDisplayMode: 'minimal' as const,
   headerStyle: { backgroundColor: colors.deep },
   headerTintColor: colors.text,
   headerShadowVisible: false,

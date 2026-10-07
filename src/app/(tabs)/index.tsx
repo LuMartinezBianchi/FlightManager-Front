@@ -1,113 +1,105 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { Pressable, Image as RNImage, SectionList, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Chip } from '@/components/chip';
 import { colors } from '@/constants/theme';
+import { sections } from '@/data/flights';
 import { calendar as styles } from '@/styles/calendar';
 import { common } from '@/styles/common';
-
-type Flight = {
-  number: string;
-  from: string;
-  to: string;
-  dep: string;
-  arr: string;
-  duration: string;
-  aircraft: string;
-};
+import { home } from '@/styles/home';
 
 // Datos hardcodeados por ahora.
-const sections: { title: string; data: Flight[] }[] = [
-  {
-    title: 'LUN · 24 AGOSTO',
-    data: [
-      { number: 'AR1204', from: 'EZE', to: 'COR', dep: '07:15', arr: '09:05', duration: '1h 50m', aircraft: 'Boeing 737-800' },
-      { number: 'AR1207', from: 'COR', to: 'MDZ', dep: '10:10', arr: '11:35', duration: '1h 25m', aircraft: 'Boeing 737-800'},
-      { number: 'AR1210', from: 'MDZ', to: 'EZE', dep: '12:40', arr: '14:30', duration: '1h 50m', aircraft: 'Boeing 737-800'},
-    ],
-  },
-  {
-    title: 'MIÉ · 26 AGOSTO',
-    data: [
-      { number: 'AR1672', from: 'AEP', to: 'BRC', dep: '08:15', arr: '10:35', duration: '2h 20m', aircraft: 'Boeing 737 MAX 8'},
-      { number: 'AR1673', from: 'BRC', to: 'AEP', dep: '11:30', arr: '13:40', duration: '2h 10m', aircraft: 'Boeing 737 MAX 8'},
-    ],
-  },
+const stats = [
+  { value: '4.820', label: 'HS. TOTALES' },
+  { value: '42:10', label: 'ESTE MES' },
+  { value: '186', label: 'VUELOS / AÑO' },
 ];
 
-const totalFlights = sections.reduce((n, s) => n + s.data.length, 0);
+const legend = [
+  { label: 'Vuelo', color: colors.cyan },
+  { label: 'Guardia', color: colors.amber },
+  { label: 'Libre', color: colors.green },
+];
+
+const nextFlight = sections[0].data[0];
 
 const calendarImage = require('@/assets/images/calendar-placeholder.png');
-const calendarSize = RNImage.resolveAssetSource(calendarImage);
 
-export default function CalendarScreen() {
+// Pantalla 1: Inicio.
+export default function HomeScreen() {
   return (
     <SafeAreaView style={common.screen} edges={['top']}>
-      <SectionList
-        
-        sections={sections}
-        keyExtractor={(item) => item.number}
-        contentContainerStyle={common.content}
-        stickySectionHeadersEnabled={false}
-        ListHeaderComponent={<Header />}
-        
-        renderSectionHeader={({ section }) => (
-          <Text style={[styles.label, styles.dayLabel]}>{section.title}</Text>
-        )}
-
-        renderItem={({ item }) => <FlightCard flight={item} />}
-      />
-    </SafeAreaView>
-  );
-}
-
-function Header() {
-  return (
-    <View>
+      <ScrollView contentContainerStyle={common.content}>
         <Text style={styles.bigTitle}>Flight Manager</Text>
 
-      <Image
-        source={calendarImage}
-        style={[styles.calendar, { aspectRatio: calendarSize.width / calendarSize.height }]}
-      />
+        <Image source={calendarImage} style={styles.calendar} resizeMode='contain' />
 
-      <View style={styles.row}>
-        <Text style={common.title}>Próximos vuelos</Text>
-        <Text style={styles.label}>{totalFlights} programados</Text>
-      </View>
-    </View>
-  );
-}
-
-function FlightCard({ flight }: { flight: Flight }) {
-
-  return (
-    <Pressable style={({ pressed }) => [common.card, styles.card, pressed && common.pressed]}>
-
-      <View style={styles.row}>
-        <Text style={styles.flightNumber}>Vuelo {flight.number}</Text>
-      </View>
-
-      <View style={styles.row}>
-        <View>
-          <Text style={styles.airportCode}>{flight.from}</Text>
-          <Text style={styles.label}>{flight.dep}</Text>
+        <View style={home.legend}>
+          {legend.map((item) => (
+            <View key={item.label} style={home.legendItem}>
+              <View style={[home.dot, { backgroundColor: item.color }]} />
+              <Text style={styles.label}>{item.label}</Text>
+            </View>
+          ))}
         </View>
 
-        <View style={styles.routeMiddle}>
-          <View style={styles.routeLine} />
-          <Ionicons name="airplane" size={16} color={colors.cyan} style={styles.planeIcon} />
-          <Text style={styles.duration}>{flight.duration}</Text>
-        </View>
+        <Pressable
+          style={({ pressed }) => [common.card, home.nextCard, pressed && common.pressed]}
+          onPress={() => router.push('/(tabs)/next-flight')}
+        >
+          <View style={styles.row}>
+            <Text style={home.nextLabel}>PRÓXIMO VUELO</Text>
+            <Chip label="Sale en 2 d 4 h" tone="cyan" />
+          </View>
 
-        <View style={styles.alignRight}>
-          <Text style={styles.airportCode}>{flight.to}</Text>
-          <Text style={styles.label}>{flight.arr}</Text>
-        </View>
-      </View>
+          <View style={styles.row}>
+            <View>
+              <Text style={styles.airportCode}>{nextFlight.from}</Text>
+              <Text style={styles.label}>{nextFlight.dep}</Text>
+            </View>
 
-      <Text style={styles.label}>{flight.aircraft}</Text>
-    </Pressable>
+            <View style={styles.routeMiddle}>
+              <View style={styles.routeLine} />
+              <Ionicons name="airplane" size={16} style={styles.planeIcon} />
+            </View>
+
+            <View style={styles.alignRight}>
+              <Text style={styles.airportCode}>{nextFlight.to}</Text>
+              <Text style={styles.label}>{nextFlight.arr}</Text>
+            </View>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Vuelo {nextFlight.number} · Lun 24 Ago</Text>
+            <Ionicons name="chevron-forward" size={16} color={colors.textDim} />
+          </View>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [home.alert, pressed && common.pressed]}
+          onPress={() => router.push('/(tabs)/flight-log')}
+        >
+          <View style={home.alertIcon}>
+            <Ionicons name="book-outline" size={18} color={colors.amber} />
+          </View>
+          <View style={home.alertText}>
+            <Text style={home.alertTitle}>2 vuelos sin registrar</Text>
+            <Text style={home.alertSubtitle}>Completá el libro de vuelo para mantenerlo al día</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.amber} />
+        </Pressable>
+
+        <View style={home.stats}>
+          {stats.map((stat) => (
+            <View key={stat.label} style={[common.card, home.stat]}>
+              <Text style={common.title}>{stat.value}</Text>
+              <Text style={home.statLabel}>{stat.label}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

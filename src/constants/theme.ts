@@ -1,6 +1,5 @@
-// Valores de diseño de FlightManager (paleta del mockup).
-// Todos los estilos de la app leen de acá, así que cambiar un color o un
-// espaciado se hace en un único lugar.
+// Todos los estilos de la app leen de aca, asi que cambiar un color o un
+// espaciado se hace en un unico lugar
 
 export const colors = {
   // Fondos
@@ -21,13 +20,13 @@ export const colors = {
   green: '#3ED598', // libre
   red: '#F26D6F', // alerta
 
-  // Fondos suaves para chips e íconos (acento con ~15% de opacidad)
+  // Fondos suaves para chips e iconos (15% de opacidad)
   cyanSoft: 'rgba(63, 199, 244, 0.15)',
   amberSoft: 'rgba(243, 167, 62, 0.15)',
   greenSoft: 'rgba(62, 213, 152, 0.15)',
   redSoft: 'rgba(242, 109, 111, 0.15)',
 
-  // Texto sobre un fondo de acento (ej: botón cyan)
+  // Texto sobre un fondo de acento (ej: boton cyan)
   onAccent: '#0B0F1C',
 };
 
@@ -40,7 +39,7 @@ export const fontSize = { xs: 10, sm: 12, md: 14, lg: 16, xl: 20, xxl: 26 };
 // Tonos de estado, para componentes que cambian de color según el caso (Chip, NOTAM, etc.)
 export type Tone = 'cyan' | 'amber' | 'green' | 'red';
 
-export const tones: Record<Tone, { color: string; soft: string }> = {
+export const tones: { [key in Tone]: { color: string; soft: string } } = {
   cyan: { color: colors.cyan, soft: colors.cyanSoft },
   amber: { color: colors.amber, soft: colors.amberSoft },
   green: { color: colors.green, soft: colors.greenSoft },

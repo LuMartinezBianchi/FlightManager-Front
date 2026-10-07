@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { colors, fontSize, radius, spacing } from '@/constants/theme';
 
-// Estilos que se repiten en varias pantallas.
+// Estilos que se repiten en varias pantallas
 export const common = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.deep },
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
