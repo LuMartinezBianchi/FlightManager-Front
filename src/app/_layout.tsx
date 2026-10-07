@@ -1,10 +1,10 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-import { headerScreenOptions, stackScreenOptions } from '@/styles/navigation';
+import { stackScreenOptions } from '@/styles/navigation';
 
 // Layout raiz: un Stack que contiene el grupo de tabs y las pantallas
-// que se abren por encima de la barra de tabs (formularios, listas de edicion, etc.).
+// que se abren por encima de la barra de tabs.
 // Es el lugar para cosas globales, como el StatusBar.
 // los <> </> son obligatorios.
 export default function RootLayout() {
@@ -12,20 +12,21 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" />
       <Stack screenOptions={stackScreenOptions}>
-        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-        {/* Agregar vuelos desde .xlsx: elegir archivo -> vista previa -> exito */}
-        <Stack.Screen name="add-flights" options={{ ...headerScreenOptions, title: 'Agregar vuelos' }} />
-        <Stack.Screen name="import-preview" options={{ ...headerScreenOptions, title: 'Vista previa' }} />
-        <Stack.Screen name="import-success" options={{ gestureEnabled: false }} />
-        <Stack.Screen name="add-flight-manual" options={{ ...headerScreenOptions, title: 'Agregar vuelo' }} />
+        {/* Agregar vuelos desde .xlsx */}
+        <Stack.Screen name="add-flights" options={{ title: 'Agregar vuelos' }} />
+        <Stack.Screen name="import-preview" options={{ title: 'Vista previa' }} />
+        <Stack.Screen name="import-success" options={{ headerShown: false }} />
+        <Stack.Screen name="add-flight-manual" options={{ title: 'Agregar vuelo' }} />
 
-        {/* Modificar vuelos: lista -> editar (con dialogo para eliminar) */}
-        <Stack.Screen name="edit-flights" options={{ ...headerScreenOptions, title: 'Modificar vuelos' }} />
-        <Stack.Screen name="edit-flight" options={{ ...headerScreenOptions, title: 'Editar vuelo' }} />
+        {/* Modificar vuelos */}
+        <Stack.Screen name="edit-flights" options={{ title: 'Modificar vuelos' }} />
+        <Stack.Screen name="edit-flight" options={{ title: 'Editar vuelo' }} />
 
-        {/* Formulario del libro de vuelo (cargar por primera vez o editar) */}
-        <Stack.Screen name="logbook-entry" options={headerScreenOptions} />
+        {/* Libro de vuelo */}
+        <Stack.Screen name="logbook-new" options={{ title: 'Cargar libro de vuelo' }} />
+        <Stack.Screen name="logbook-edit" options={{ title: 'Editar registro' }} />
       </Stack>
     </>
   );

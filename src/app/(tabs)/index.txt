@@ -1,4 +1,0 @@
-- se cambio objeto Imagen de la libreria 'expo-image'
-  por la misma de 'react-native'. ya no se utiliza
-  prop "resolveAssetSource()", sino que se marca
-  dimensiones fijas y se utiliza resizeMode='contain'

@@ -14,16 +14,18 @@ export default function ImportSuccessScreen() {
   return (
     <SafeAreaView style={common.screen}>
       <View style={styles.success}>
-        <Ionicons name="checkmark-circle-outline" size={88} color={colors.green} />
+        <View style={styles.successMark}>
+          <Ionicons name="checkmark" size={44} color={colors.green} />
+        </View>
         <Text style={common.title}>¡Vuelos importados!</Text>
         <Text style={styles.successText}>
           Se agregaron 10 vuelos al calendario. Las 2 filas con errores quedaron sin importar.
         </Text>
       </View>
 
-      <View style={[forms.bottomBar, { borderTopWidth: 0 }]}>
-        <Button label="Ver vuelos programados" icon="list-outline" onPress={() => router.dismissTo('/(tabs)/flights')} />
-        <Button label="Volver al inicio" kind="secondary" onPress={() => router.dismissTo('/(tabs)')} />
+      <View style={forms.bottomBar}>
+        <Button label="Ver vuelos programados" icon="list-outline" onPress={() => router.dismissTo('/flights')} />
+        <Button label="Volver al inicio" kind="secondary" onPress={() => router.dismissTo('/')} />
       </View>
     </SafeAreaView>
   );

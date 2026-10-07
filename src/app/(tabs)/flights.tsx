@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { SectionList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,15 +15,10 @@ export default function FlightsScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.number}
-        contentContainerStyle={common.content}
-        stickySectionHeadersEnabled={false}
+        style={flights.list}
         ListHeaderComponent={<Header />}
-        renderSectionHeader={({ section }) => (
-          <Text style={[styles.label, styles.dayLabel]}>{section.title}</Text>
-        )}
-        renderItem={({ item }) => (
-          <FlightCard flight={item} onPress={() => router.push('/(tabs)/next-flight')} />
-        )}
+        renderSectionHeader={({ section }) => <Text style={flights.day}>{section.title}</Text>}
+        renderItem={({ item }) => <FlightCard flight={item} />}
       />
     </SafeAreaView>
   );
@@ -38,10 +32,8 @@ function Header() {
         <Text style={styles.label}>{totalFlights} programados</Text>
       </View>
 
-      <View style={flights.actions}>
-        <Button label="Agregar vuelos desde .xlsx" icon="grid-outline" onPress={() => router.push('/add-flights')} />
-        <Button label="Modificar vuelos" kind="secondary" icon="create-outline" onPress={() => router.push('/edit-flights')} />
-      </View>
+      <Button label="Agregar vuelos desde .xlsx" icon="grid-outline" href="/add-flights" />
+      <Button label="Modificar vuelos" kind="secondary" icon="create-outline" href="/edit-flights" />
     </View>
   );
 }

@@ -3,56 +3,45 @@ import { StyleSheet } from 'react-native';
 
 // Estilos de la pantalla Inicio (app/(tabs)/index.tsx).
 export const home = StyleSheet.create({
-  // ---------- Leyenda del calendario ----------
-  legend: {
+  // ---------- Proximo vuelo: una View con fondo que agrupa titulo, estado y tarjeta ----------
+  nextBox: {
+    backgroundColor: colors.panel,
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+  },
+  nextRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: spacing.lg,
-    marginBottom: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
   },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  dot: { width: 8, height: 8, borderRadius: radius.round },
-
-  // ---------- Tarjeta del proximo vuelo ----------
-  nextCard: { padding: spacing.lg, gap: spacing.md, marginBottom: spacing.md },
-  nextLabel: {
-    color: colors.textDim,
-    fontSize: fontSize.xs,
-    fontWeight: '600',
-    letterSpacing: 1,
-  },
+  nextLabel: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: 'bold' },
 
   // ---------- Alerta del libro de vuelo ----------
   alert: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
     backgroundColor: colors.amberSoft,
     borderWidth: 1,
     borderColor: colors.amber,
     borderRadius: radius.lg,
   },
-  alertIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.md,
-    backgroundColor: colors.amberSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  alertText: { flex: 1, gap: 2 },
-  alertTitle: { color: colors.text, fontSize: fontSize.md, fontWeight: '700' },
-  alertSubtitle: { color: colors.textDim, fontSize: fontSize.sm },
+  alertIcon: { marginRight: spacing.md },
+  alertText: { flex: 1 },
+  alertTitle: { color: colors.text, fontSize: fontSize.md, fontWeight: 'bold' },
+  alertSubtitle: { color: colors.textDim, fontSize: fontSize.sm, marginTop: spacing.xs },
 
   // ---------- Metricas ----------
-  stats: { flexDirection: 'row', gap: spacing.sm },
+  stats: { flexDirection: 'row' },
   stat: {
     flex: 1, // las 3 tarjetas del mismo ancho
     alignItems: 'center',
-    paddingVertical: spacing.lg,
-    gap: spacing.xs,
+    padding: spacing.lg,
+    marginLeft: spacing.xs,
+    marginRight: spacing.xs,
   },
-  statLabel: { color: colors.textDim, fontSize: fontSize.xs, fontWeight: '600' },
+  statLabel: { color: colors.textDim, fontSize: fontSize.xs, fontWeight: 'bold', marginTop: spacing.xs },
 });

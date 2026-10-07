@@ -157,7 +157,7 @@ export default function NextFlightScreen() {
 
         <Pressable
           style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
-          onPress={() => router.push('/logbook-entry')}
+          onPress={() => router.push('/logbook-new')}
         >
           <Text style={styles.logbookBtnText}>Llenar libro de vuelo</Text>
         </Pressable>

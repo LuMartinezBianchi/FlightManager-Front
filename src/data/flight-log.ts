@@ -16,11 +16,13 @@ export const logRecords: LogRecord[] = [
   { number: 'AR1351', date: '18 Ago 2026', from: 'REL', to: 'EZE', hours: '2:05' },
 ];
 
-// Suma una lista de horas en formato h:mm y devuelve el total en el mismo formato
+// Suma horas en formato h:mm (ej: ['1:50', '2:40'] -> '4:30')
 export function sumHours(list: string[]) {
-  const minutes = list.reduce((total, h) => {
-    const [hh, mm] = h.split(':').map(Number);
-    return total + hh * 60 + mm;
-  }, 0);
-  return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
+  let minutes = 0;
+  for (const hours of list) {
+    const parts = hours.split(':');
+    minutes = minutes + Number(parts[0]) * 60 + Number(parts[1]);
+  }
+  const mm = minutes % 60;
+  return Math.floor(minutes / 60) + ':' + (mm < 10 ? '0' + mm : mm);
 }

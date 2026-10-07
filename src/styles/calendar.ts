@@ -31,7 +31,7 @@ export const calendar = StyleSheet.create({
     width: '100%',
     height: 450,
     borderRadius: radius.xl,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xl,
   },
 
   dayLabel: {

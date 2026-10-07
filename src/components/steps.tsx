@@ -8,9 +8,9 @@ export function Steps({ step, label }: { step: number; label: string }) {
   return (
     <View>
       <View style={forms.steps}>
-        {[1, 2, 3].map((n) => (
-          <View key={n} style={[forms.step, n <= step && forms.stepOn]} />
-        ))}
+        <View style={[forms.step, step >= 1 && forms.stepOn]} />
+        <View style={[forms.step, step >= 2 && forms.stepOn]} />
+        <View style={[forms.step, step >= 3 && forms.stepOn]} />
       </View>
       <Text style={calendar.label}>
         Paso {step} de 3 · {label}

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Chip } from '@/components/chip';
@@ -27,8 +27,21 @@ export default function FlightLogScreen() {
   const allSelected = selected.length === logRecords.length;
   const selectedRecords = logRecords.filter((r) => selected.includes(r.number));
 
-  const toggle = (number: string) =>
-    setSelected(selected.includes(number) ? selected.filter((n) => n !== number) : [...selected, number]);
+  function toggle(number: string) {
+    if (selected.includes(number)) {
+      setSelected(selected.filter((n) => n !== number));
+    } else {
+      setSelected([...selected, number]);
+    }
+  }
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelected([]);
+    } else {
+      setSelected(logRecords.map((r) => r.number));
+    }
+  }
 
   return (
     <SafeAreaView style={common.screen} edges={['top']}>
@@ -38,66 +51,61 @@ export default function FlightLogScreen() {
           <Text style={common.subtitle}>42 registros totales</Text>
         </View>
 
-        <Pressable
-          style={({ pressed }) => [styles.editButton, editing && styles.editButtonOn, pressed && common.pressed]}
-          onPress={() => setEditing(!editing)}
-        >
-          {!editing && <Ionicons name="pencil" size={16} color={colors.text} />}
-          <Text style={[styles.editText, editing && styles.editTextOn]}>{editing ? 'Listo' : 'Editar'}</Text>
+        <Pressable style={[styles.editToggle, editing && styles.editToggleOn]} onPress={() => setEditing(!editing)}>
+          <Text style={[styles.editToggleText, editing && styles.editToggleTextOn]}>
+            {editing ? 'Listo' : 'Editar'}
+          </Text>
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.list}>
-        {!editing && (
-          <Pressable
-            style={styles.selectRow}
-            onPress={() => setSelected(allSelected ? [] : logRecords.map((r) => r.number))}
-          >
-            <View style={styles.selectAll}>
-              <Checkbox on={allSelected} />
-              <Text style={styles.selectAllText}>Seleccionar todos</Text>
-            </View>
-            <Chip label={`${selected.length} seleccionados`} tone="cyan" />
-          </Pressable>
-        )}
-
-        {logRecords.map((record) => {
-          const on = !editing && selected.includes(record.number);
+      <FlatList
+        data={logRecords}
+        keyExtractor={(item) => item.number}
+        style={styles.list}
+        ListHeaderComponent={
+          editing ? null : (
+            <Pressable style={styles.selectRow} onPress={toggleAll}>
+              <View style={styles.selectAll}>
+                <Checkbox on={allSelected} />
+                <Text style={styles.selectAllText}>Seleccionar todos</Text>
+              </View>
+              <Chip label={`${selected.length} seleccionados`} tone="cyan" />
+            </Pressable>
+          )
+        }
+        renderItem={({ item }) => {
+          const on = !editing && selected.includes(item.number);
           return (
             <Pressable
-              key={record.number}
               style={[common.card, styles.record, on && styles.recordOn]}
-              onPress={() => !editing && toggle(record.number)}
+              onPress={editing ? undefined : () => toggle(item.number)}
             >
               {!editing && <Checkbox on={on} />}
 
               <View style={styles.recordInfo}>
                 <View style={styles.recordTop}>
-                  <Text style={styles.recordNumber}>{record.number}</Text>
-                  <Text style={styles.recordDate}>{record.date}</Text>
+                  <Text style={styles.recordNumber}>{item.number}</Text>
+                  <Text style={styles.recordDate}>{item.date}</Text>
                 </View>
                 <Text style={styles.recordRoute}>
-                  {record.from} → {record.to}
+                  {item.from} → {item.to}
                 </Text>
               </View>
 
               <View style={styles.hours}>
-                <Text style={styles.hoursValue}>{record.hours}</Text>
+                <Text style={styles.hoursValue}>{item.hours}</Text>
                 <Text style={styles.hoursLabel}>HORAS</Text>
               </View>
 
               {editing && (
-                <Pressable
-                  style={styles.pencil}
-                  onPress={() => router.push({ pathname: '/logbook-entry', params: { mode: 'edit' } })}
-                >
+                <Pressable style={styles.pencil} onPress={() => router.push('/logbook-edit')}>
                   <Ionicons name="pencil" size={16} color={colors.cyan} />
                 </Pressable>
               )}
             </Pressable>
           );
-        })}
-      </ScrollView>
+        }}
+      />
 
       {!editing && (
         <View style={styles.exportBar}>
@@ -106,8 +114,8 @@ export default function FlightLogScreen() {
             <Text style={styles.exportTotal}>{sumHours(selectedRecords.map((r) => r.hours))} hs totales</Text>
           </View>
 
-          <Pressable style={({ pressed }) => [styles.exportButton, pressed && common.pressed]}>
-            <Ionicons name="download-outline" size={20} color={colors.onAccent} />
+          <Pressable style={styles.exportButton}>
+            <Ionicons name="download-outline" size={20} color={colors.onAccent} style={styles.exportIcon} />
             <Text style={styles.exportButtonText}>Exportar</Text>
           </Pressable>
         </View>

@@ -1,11 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Modal, Text, View } from 'react-native';
 
 import { Button } from '@/components/button';
-import { Field, FieldRow } from '@/components/field';
+import { Field } from '@/components/field';
 import { colors } from '@/constants/theme';
 import { common } from '@/styles/common';
 import { flights as styles } from '@/styles/flights';
@@ -13,66 +12,79 @@ import { forms } from '@/styles/forms';
 
 // Editar los datos de un vuelo. El boton rojo abre un dialogo para confirmar la eliminacion.
 export default function EditFlightScreen() {
+  const [number, setNumber] = useState('AR1204');
+  const [date, setDate] = useState('24/08/2026');
+  const [from, setFrom] = useState('EZE');
+  const [to, setTo] = useState('COR');
+  const [dep, setDep] = useState('07:15');
+  const [arr, setArr] = useState('09:05');
+  const [aircraft, setAircraft] = useState('Boeing 737-800');
   const [confirming, setConfirming] = useState(false);
+
+  function deleteFlight() {
+    setConfirming(false);
+    router.back();
+  }
 
   return (
     <View style={common.screen}>
-      <ScrollView contentContainerStyle={forms.content}>
-        <Text style={forms.info}>AR1204 · EZE → COR</Text>
-        <FieldRow>
-          <Field label="N.º de vuelo" value="AR1204" />
-          <Field label="Fecha" value="24/08/2026" />
-        </FieldRow>
-        <FieldRow>
-          <Field label="Origen" value="EZE" />
-          <Field label="Destino" value="COR" />
-        </FieldRow>
-        <FieldRow>
-          <Field label="Salida (hora local)" value="07:15" />
-          <Field label="Llegada (hora local)" value="09:05" />
-        </FieldRow>
-        <Field label="Avión" value="Boeing 737-800" />
-      </ScrollView>
+      <View style={[styles.screenBody, common.screen]}>
+        <View style={forms.row}>
+          <View style={forms.halfLeft}>
+            <Field label="N.º de vuelo" value={number} onChangeText={setNumber} />
+          </View>
+          <View style={forms.halfRight}>
+            <Field label="Fecha" value={date} onChangeText={setDate} />
+          </View>
+        </View>
 
-      <SafeAreaView edges={['bottom']} style={forms.bottomBar}>
+        <View style={forms.row}>
+          <View style={forms.halfLeft}>
+            <Field label="Origen" value={from} onChangeText={setFrom} />
+          </View>
+          <View style={forms.halfRight}>
+            <Field label="Destino" value={to} onChangeText={setTo} />
+          </View>
+        </View>
+
+        <View style={forms.row}>
+          <View style={forms.halfLeft}>
+            <Field label="Salida (hora local)" value={dep} onChangeText={setDep} />
+          </View>
+          <View style={forms.halfRight}>
+            <Field label="Llegada (hora local)" value={arr} onChangeText={setArr} />
+          </View>
+        </View>
+
+        <Field label="Avión" value={aircraft} onChangeText={setAircraft} />
+      </View>
+
+      <View style={forms.bottomBar}>
         <Button label="Guardar cambios" icon="save-outline" onPress={() => router.back()} />
         <Button label="Eliminar vuelo" kind="danger" icon="trash-outline" onPress={() => setConfirming(true)} />
-      </SafeAreaView>
+      </View>
 
-      <Modal
-        visible={confirming}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setConfirming(false)}
-      >
-        <Pressable style={styles.overlay} onPress={() => setConfirming(false)}>
-          {/* Pressable sin onPress para que tocar el dialogo no lo cierre */}
-          <Pressable style={styles.dialog}>
+      <Modal visible={confirming} animationType="fade" transparent>
+        <View style={styles.overlay}>
+          <View style={styles.dialog}>
             <View style={styles.dialogIcon}>
               <Ionicons name="trash-outline" size={28} color={colors.red} />
             </View>
-            <Text style={common.title}>¿Eliminar vuelo AR1204?</Text>
+            <Text style={common.title}>¿Eliminar vuelo {number}?</Text>
             <Text style={styles.dialogText}>
               Se quitará del calendario y de Vuelos programados. Esta acción no se puede deshacer.
             </Text>
 
             <View style={styles.dialogButtons}>
-              <View style={styles.dialogButton}>
+              <View style={styles.dialogButtonLeft}>
                 <Button label="Cancelar" kind="secondary" onPress={() => setConfirming(false)} />
               </View>
-              <View style={styles.dialogButton}>
-                <Button
-                  label="Eliminar"
-                  kind="danger"
-                  onPress={() => {
-                    setConfirming(false);
-                    router.back();
-                  }}
-                />
+              <View style={styles.dialogButtonRight}>
+                <Button label="Eliminar" kind="danger" onPress={deleteFlight} />
               </View>
             </View>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </View>
   );
