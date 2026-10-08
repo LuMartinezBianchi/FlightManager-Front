@@ -12,7 +12,7 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" />
       <Stack screenOptions={stackScreenOptions}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false , title: "Volver"}} />
 
         {/* Detalle de un vuelo (al tocar una tarjeta de vuelo) */}
         <Stack.Screen name="flight-detail" options={{ title: 'Detalle del vuelo' }} />

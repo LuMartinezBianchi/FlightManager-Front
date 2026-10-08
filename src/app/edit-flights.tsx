@@ -36,7 +36,6 @@ export default function EditFlightsScreen() {
               onChangeText={setSearch}
               value={search}
               placeholder="Buscar por n.º de vuelo o ruta"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
         }

@@ -88,7 +88,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.amber,
     borderRadius: radius.lg,
   },
-  alertIcon: { marginRight: spacing.md },
+  alertIcon: { marginRight: spacing.md, color:colors.amber },
   alertText: { flex: 1 },
   alertTitle: { color: colors.text, fontSize: fontSize.md, fontWeight: 'bold' },
   alertSubtitle: { color: colors.textDim, fontSize: fontSize.sm, marginTop: spacing.xs },

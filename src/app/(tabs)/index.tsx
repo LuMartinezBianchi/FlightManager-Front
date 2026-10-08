@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '@/constants/theme';
 import { sections } from '@/data/flights';
 import { styles } from '@/styles/index-styles';
 
@@ -66,12 +65,12 @@ export default function HomeScreen() {
         </View>
 
         <Pressable style={styles.alert} onPress={() => router.push('/flight-log')}>
-          <Ionicons name="book-outline" size={22} color={colors.amber} style={styles.alertIcon} />
+          <Ionicons name="book-outline" size={22} style={styles.alertIcon} />
           <View style={styles.alertText}>
             <Text style={styles.alertTitle}>2 vuelos sin registrar</Text>
             <Text style={styles.alertSubtitle}>Completá el libro de vuelo para mantenerlo al día</Text>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.amber} />
+          <Ionicons name="chevron-forward" size={18} style={styles.alertIcon} />
         </Pressable>
 
         <View style={styles.stats}>

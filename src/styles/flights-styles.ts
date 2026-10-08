@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   secondaryButtonText: { color: colors.text, fontSize: fontSize.lg, fontWeight: 'bold' },
-  buttonIcon: { marginRight: spacing.sm },
+  buttonIcon: { marginRight: spacing.sm, color: colors.cyan },
 
   day: {
     color: colors.textDim,

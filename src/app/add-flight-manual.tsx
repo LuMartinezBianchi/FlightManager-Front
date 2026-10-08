@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '@/constants/theme';
 import { styles } from '@/styles/add-flight-manual-styles';
 
 // Agregar un vuelo cargando los datos a mano.
@@ -28,7 +27,6 @@ export default function AddFlightManualScreen() {
               onChangeText={setNumber}
               value={number}
               placeholder="Ej: AR1204"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
           <View style={[styles.fieldBox, styles.halfRight]}>
@@ -38,7 +36,6 @@ export default function AddFlightManualScreen() {
               onChangeText={setDate}
               value={date}
               placeholder="DD/MM/AAAA"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
         </View>
@@ -51,7 +48,6 @@ export default function AddFlightManualScreen() {
               onChangeText={setFrom}
               value={from}
               placeholder="IATA"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
           <View style={[styles.fieldBox, styles.halfRight]}>
@@ -61,7 +57,6 @@ export default function AddFlightManualScreen() {
               onChangeText={setTo}
               value={to}
               placeholder="IATA"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
         </View>
@@ -74,7 +69,6 @@ export default function AddFlightManualScreen() {
               onChangeText={setDep}
               value={dep}
               placeholder="--:--"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
           <View style={[styles.fieldBox, styles.halfRight]}>
@@ -84,7 +78,6 @@ export default function AddFlightManualScreen() {
               onChangeText={setArr}
               value={arr}
               placeholder="--:--"
-              placeholderTextColor={colors.textFaint}
             />
           </View>
         </View>
@@ -96,14 +89,13 @@ export default function AddFlightManualScreen() {
             onChangeText={setAircraft}
             value={aircraft}
             placeholder="Ej: Boeing 737-800"
-            placeholderTextColor={colors.textFaint}
           />
         </View>
       </View>
 
       <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
         <Pressable style={styles.primaryButton} onPress={() => router.back()}>
-          <Ionicons name="save-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Ionicons name="save-outline" size={20} style={styles.buttonIcon} />
           <Text style={styles.primaryButtonText}>Guardar vuelo</Text>
         </Pressable>
       </SafeAreaView>

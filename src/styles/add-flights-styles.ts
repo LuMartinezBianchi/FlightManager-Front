@@ -5,12 +5,6 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.deep, padding: spacing.lg },
 
-  // ---------- Pasos ----------
-  steps: { flexDirection: 'row', marginBottom: spacing.sm },
-  step: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.border, marginRight: spacing.xs },
-  stepOn: { backgroundColor: colors.cyan },
-  stepLabel: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: '600' },
-
   // ---------- Zona para elegir el archivo ----------
   dropzone: {
     alignItems: 'center',
@@ -19,7 +13,6 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.cyan,
     borderRadius: radius.xl,
-    marginTop: spacing.lg,
     marginBottom: spacing.lg,
   },
   dropzoneIcon: {
