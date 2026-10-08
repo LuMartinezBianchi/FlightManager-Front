@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '@/constants/theme';
 import { emptyLogbook, filledLogbook } from '@/data/logbook';
 import { styles } from '@/styles/logbook-entry-styles';
 
@@ -167,7 +166,6 @@ export default function LogbookEntryScreen() {
                     onChangeText={(text) => change(item.key, text)}
                     value={form[item.key]}
                     placeholder={item.placeholder}
-                    placeholderTextColor={colors.textFaint}
                     multiline={item.multiline}
                   />
                 )}
@@ -179,7 +177,7 @@ export default function LogbookEntryScreen() {
 
       <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
         <Pressable style={styles.primaryButton} onPress={() => router.back()}>
-          <Ionicons name="save-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Ionicons name="save-outline" size={20} style={styles.buttonIcon} />
           <Text style={styles.primaryButtonText}>{editing ? 'Guardar cambios' : 'Guardar registro'}</Text>
         </Pressable>
       </SafeAreaView>

@@ -22,7 +22,7 @@ export default function ImportSuccessScreen() {
 
       <View style={styles.bottomBar}>
         <Pressable style={styles.primaryButton} onPress={() => router.dismissTo('/flights')}>
-          <Ionicons name="list-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Ionicons name="list-outline" size={20} style={styles.buttonIcon} />
           <Text style={styles.primaryButtonText}>Ver vuelos programados</Text>
         </Pressable>
         <Pressable style={styles.secondaryButton} onPress={() => router.dismissTo('/')}>
