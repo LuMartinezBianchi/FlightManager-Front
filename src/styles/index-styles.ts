@@ -13,12 +13,54 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: spacing.lg,
   },
+  // ---------- Calendario ----------
   calendar: {
-    width: '100%',
-    height: 450,
+    backgroundColor: colors.card,
     borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  monthRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+  },
+  arrow: { padding: spacing.sm },
+  month: { color: colors.text, fontSize: fontSize.lg, fontWeight: 'bold' },
+  week: { flexDirection: 'row' },
+  weekDay: {
+    width: '14.28%',
+    textAlign: 'center',
+    color: colors.textFaint,
+    fontSize: fontSize.sm,
+    fontWeight: 'bold',
+    marginBottom: spacing.sm,
+  },
+  days: { flexDirection: 'row', flexWrap: 'wrap' },
+  cell: { width: '14.28%', alignItems: 'center', marginBottom: spacing.xs },
+  day: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayText: { color: colors.text, fontSize: fontSize.md, fontWeight: '600' },
+  legend: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: spacing.xl,
   },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: spacing.md,
+    marginRight: spacing.md,
+  },
+  dot: { width: 8, height: 8, borderRadius: radius.round, marginRight: spacing.xs },
 
   // ---------- Proximo vuelo: una View con fondo que agrupa titulo, estado y tarjeta ----------
   nextBox: {
@@ -34,13 +76,6 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   nextLabel: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: 'bold' },
-  chip: {
-    backgroundColor: colors.cyanSoft,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.round,
-  },
-  chipText: { color: colors.cyan, fontSize: fontSize.sm, fontWeight: '700' },
 
   // ---------- Tarjeta de vuelo ----------
   card: {
