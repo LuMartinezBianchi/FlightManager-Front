@@ -1,4 +1,0 @@
-- eliminados comentarios claudianos
-- se reemplazo el metodo "Record<...>" con un tipado a mano,
-  asi relaciono las claves de Tone para regular el uso de 
-  los colores en el objeto "color".
