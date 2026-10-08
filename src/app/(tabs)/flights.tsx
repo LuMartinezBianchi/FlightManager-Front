@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { Pressable, SectionList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '@/constants/theme';
 import { sections, totalFlights } from '@/data/flights';
 import { styles } from '@/styles/flights-styles';
 
@@ -23,12 +22,12 @@ export default function FlightsScreen() {
             </View>
 
             <Pressable style={styles.primaryButton} onPress={() => router.push('/add-flights')}>
-              <Ionicons name="grid-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+              <Ionicons name="grid-outline" size={20} style={styles.buttonIcon} />
               <Text style={styles.primaryButtonText}>Agregar vuelos desde .xlsx</Text>
             </Pressable>
 
             <Pressable style={styles.secondaryButton} onPress={() => router.push('/edit-flights')}>
-              <Ionicons name="create-outline" size={20} color={colors.cyan} style={styles.buttonIcon} />
+              <Ionicons name="create-outline" size={20} style={styles.buttonIcon} />
               <Text style={styles.secondaryButtonText}>Modificar vuelos</Text>
             </Pressable>
           </View>

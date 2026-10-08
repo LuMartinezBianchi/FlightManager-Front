@@ -41,5 +41,5 @@ export const styles = StyleSheet.create({
     borderColor: colors.cyan,
   },
   primaryButtonText: { color: colors.onAccent, fontSize: fontSize.lg, fontWeight: 'bold' },
-  buttonIcon: { marginRight: spacing.sm },
+  buttonIcon: { marginRight: spacing.sm, color:colors.onAccent },
 });

@@ -9,14 +9,6 @@ import { styles } from '@/styles/add-flights-styles';
 export default function AddFlightsScreen() {
   return (
     <View style={styles.screen}>
-      <View>
-        <View style={styles.steps}>
-          <View style={[styles.step, styles.stepOn]} />
-          <View style={styles.step} />
-          <View style={styles.step} />
-        </View>
-        <Text style={styles.stepLabel}>Paso 1 de 3 · Elegir archivo</Text>
-      </View>
 
       <View style={styles.dropzone}>
         <View style={styles.dropzoneIcon}>
@@ -25,7 +17,6 @@ export default function AddFlightsScreen() {
         <Text style={styles.dropzoneTitle}>Elegí un archivo .xlsx</Text>
         <Text style={styles.dropzoneText}>Tocá para buscar el archivo en tu dispositivo</Text>
         <Pressable style={styles.chooseButton} onPress={() => router.push('/import-preview')}>
-          <Ionicons name="grid-outline" size={18} color={colors.onAccent} style={styles.chooseIcon} />
           <Text style={styles.chooseButtonText}>Elegir archivo .xlsx</Text>
         </Pressable>
       </View>
@@ -37,7 +28,6 @@ export default function AddFlightsScreen() {
             Columnas: N.º de vuelo, fecha, origen, destino, salida, llegada y avión
           </Text>
         </View>
-        <Ionicons name="download-outline" size={22} color={colors.cyan} />
       </View>
 
       <View style={styles.divider}>
