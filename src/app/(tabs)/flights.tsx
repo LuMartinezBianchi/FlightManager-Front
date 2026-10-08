@@ -1,39 +1,70 @@
-import { SectionList, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { Pressable, SectionList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/button';
-import { FlightCard } from '@/components/flight-card';
+import { colors } from '@/constants/theme';
 import { sections, totalFlights } from '@/data/flights';
-import { calendar as styles } from '@/styles/calendar';
-import { common } from '@/styles/common';
-import { flights } from '@/styles/flights';
+import { styles } from '@/styles/flights-styles';
 
 // Pantalla 2: Vuelos programados. Desde aca se agregan y se modifican vuelos.
 export default function FlightsScreen() {
   return (
-    <SafeAreaView style={common.screen} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.number}
-        style={flights.list}
-        ListHeaderComponent={<Header />}
-        renderSectionHeader={({ section }) => <Text style={flights.day}>{section.title}</Text>}
-        renderItem={({ item }) => <FlightCard flight={item} />}
+        style={styles.list}
+        ListHeaderComponent={
+          <View>
+            <View style={styles.header}>
+              <Text style={styles.title}>Próximos vuelos</Text>
+              <Text style={styles.count}>{totalFlights} programados</Text>
+            </View>
+
+            <Pressable style={styles.primaryButton} onPress={() => router.push('/add-flights')}>
+              <Ionicons name="grid-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+              <Text style={styles.primaryButtonText}>Agregar vuelos desde .xlsx</Text>
+            </Pressable>
+
+            <Pressable style={styles.secondaryButton} onPress={() => router.push('/edit-flights')}>
+              <Ionicons name="create-outline" size={20} color={colors.cyan} style={styles.buttonIcon} />
+              <Text style={styles.secondaryButtonText}>Modificar vuelos</Text>
+            </Pressable>
+          </View>
+        }
+        renderSectionHeader={({ section }) => <Text style={styles.day}>{section.title}</Text>}
+        renderItem={({ item }) => (
+          <Pressable
+            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+            onPress={() => router.push('/flight-detail')}
+          >
+            <View style={styles.row}>
+              <Text style={styles.flightNumber}>Vuelo {item.number}</Text>
+            </View>
+
+            <View style={styles.row}>
+              <View>
+                <Text style={styles.airportCode}>{item.from}</Text>
+                <Text style={styles.label}>{item.dep}</Text>
+              </View>
+
+              <View style={styles.routeMiddle}>
+                <View style={styles.routeLine} />
+                <Ionicons name="airplane" size={16} style={styles.planeIcon} />
+                <Text style={styles.duration}>{item.duration}</Text>
+              </View>
+
+              <View style={styles.alignRight}>
+                <Text style={styles.airportCode}>{item.to}</Text>
+                <Text style={styles.label}>{item.arr}</Text>
+              </View>
+            </View>
+
+            <Text style={styles.label}>{item.aircraft}</Text>
+          </Pressable>
+        )}
       />
     </SafeAreaView>
-  );
-}
-
-function Header() {
-  return (
-    <View>
-      <View style={common.header}>
-        <Text style={common.title}>Próximos vuelos</Text>
-        <Text style={styles.label}>{totalFlights} programados</Text>
-      </View>
-
-      <Button label="Agregar vuelos desde .xlsx" icon="grid-outline" href="/add-flights" />
-      <Button label="Modificar vuelos" kind="secondary" icon="create-outline" href="/edit-flights" />
-    </View>
   );
 }

@@ -1,9 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { styles } from '@/styles/next-flight-styles';
+import { styles } from '@/styles/flight-detail-styles';
 
 
 
@@ -88,11 +87,12 @@ function CrewItem({ item, isLast }: { item: (typeof CREW)[0]; isLast: boolean })
 }
 
 
-export default function NextFlightScreen() {
+// Detalle de un vuelo. Se abre como stack al tocar una tarjeta de vuelo.
+export default function FlightDetailScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <View style={styles.screen}>
 
       {/* Encabezado fijo: no scrollea */}
       <View style={[styles.header, styles.gutter]}>
@@ -176,7 +176,7 @@ export default function NextFlightScreen() {
         </View>
         
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

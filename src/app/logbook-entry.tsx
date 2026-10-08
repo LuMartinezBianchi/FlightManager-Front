@@ -1,13 +1,12 @@
-import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { SectionList, Text, View } from 'react-native';
+import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/button';
-import { Field } from '@/components/field';
-import { OptionGroup } from '@/components/option-group';
-import { LogbookForm as Form } from '@/data/logbook';
-import { common } from '@/styles/common';
-import { forms } from '@/styles/forms';
+import { colors } from '@/constants/theme';
+import { emptyLogbook, filledLogbook } from '@/data/logbook';
+import { styles } from '@/styles/logbook-entry-styles';
 
 type Item = { key: string; label: string; placeholder?: string; options?: string[]; multiline?: boolean };
 
@@ -113,40 +112,62 @@ const sections: { title: string; data: Item[][] }[] = [
   },
 ];
 
-// Formulario del libro de vuelo. "initial" trae los datos con los que arranca:
-// vacio para cargar un vuelo, o completo para editarlo.
-export function LogbookForm({ initial, buttonLabel }: { initial: Form; buttonLabel: string }) {
-  const [form, setForm] = useState(initial);
+// Formulario del libro de vuelo con los datos que pide ANAC.
+// Se abre vacio para cargar un vuelo por primera vez (desde Próx. vuelo)
+// o con los datos cargados para editarlo (desde Libro de vuelo, con mode=edit).
+export default function LogbookEntryScreen() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const editing = mode === 'edit';
+  const [form, setForm] = useState(editing ? filledLogbook : emptyLogbook);
 
   function change(key: string, text: string) {
     setForm({ ...form, [key]: text });
   }
 
   return (
-    <View style={common.screen}>
+    <View style={styles.screen}>
+      <Stack.Screen options={{ title: editing ? 'Editar registro' : 'Cargar libro de vuelo' }} />
+
       <SectionList
         sections={sections}
         keyExtractor={(row) => row[0].key}
-        style={forms.form}
-        ListHeaderComponent={<Text style={forms.info}>AR1204 · EZE → COR · 24 Ago 2026</Text>}
-        renderSectionHeader={({ section }) => <Text style={forms.sectionTitle}>{section.title}</Text>}
+        style={styles.form}
+        ListHeaderComponent={<Text style={styles.info}>AR1204 · EZE → COR · 24 Ago 2026</Text>}
+        renderSectionHeader={({ section }) => <Text style={styles.sectionTitle}>{section.title}</Text>}
         renderItem={({ item: row }) => (
-          <View style={forms.row}>
+          <View style={styles.row}>
             {row.map((item, index) => (
-              <View key={item.key} style={index === 0 && row.length > 1 ? forms.halfLeft : forms.halfRight}>
+              <View
+                key={item.key}
+                style={[styles.fieldBox, index === 0 && row.length > 1 ? styles.halfLeft : styles.halfRight]}
+              >
+                <Text style={styles.label}>{item.label}</Text>
+
                 {item.options ? (
-                  <OptionGroup
-                    label={item.label}
-                    options={item.options}
-                    selected={form[item.key]}
-                    onSelect={(option) => change(item.key, option)}
-                  />
+                  <View style={styles.options}>
+                    {item.options.map((option, i, all) => (
+                      <Pressable
+                        key={option}
+                        style={[
+                          styles.option,
+                          i < all.length - 1 && styles.optionSpace,
+                          option === form[item.key] && styles.optionOn,
+                        ]}
+                        onPress={() => change(item.key, option)}
+                      >
+                        <Text style={[styles.optionText, option === form[item.key] && styles.optionTextOn]}>
+                          {option}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
                 ) : (
-                  <Field
-                    label={item.label}
-                    value={form[item.key]}
+                  <TextInput
+                    style={[styles.input, item.multiline && styles.inputMultiline]}
                     onChangeText={(text) => change(item.key, text)}
+                    value={form[item.key]}
                     placeholder={item.placeholder}
+                    placeholderTextColor={colors.textFaint}
                     multiline={item.multiline}
                   />
                 )}
@@ -156,9 +177,12 @@ export function LogbookForm({ initial, buttonLabel }: { initial: Form; buttonLab
         )}
       />
 
-      <View style={forms.bottomBar}>
-        <Button label={buttonLabel} icon="save-outline" onPress={() => router.back()} />
-      </View>
+      <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
+        <Pressable style={styles.primaryButton} onPress={() => router.back()}>
+          <Ionicons name="save-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Text style={styles.primaryButtonText}>{editing ? 'Guardar cambios' : 'Guardar registro'}</Text>
+        </Pressable>
+      </SafeAreaView>
     </View>
   );
 }

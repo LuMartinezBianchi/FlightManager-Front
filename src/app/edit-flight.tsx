@@ -1,14 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Modal, Text, View } from 'react-native';
+import { Modal, Pressable, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/button';
-import { Field } from '@/components/field';
 import { colors } from '@/constants/theme';
-import { common } from '@/styles/common';
-import { flights as styles } from '@/styles/flights';
-import { forms } from '@/styles/forms';
+import { styles } from '@/styles/edit-flight-styles';
 
 // Editar los datos de un vuelo. El boton rojo abre un dialogo para confirmar la eliminacion.
 export default function EditFlightScreen() {
@@ -27,61 +24,76 @@ export default function EditFlightScreen() {
   }
 
   return (
-    <View style={common.screen}>
-      <View style={[styles.screenBody, common.screen]}>
-        <View style={forms.row}>
-          <View style={forms.halfLeft}>
-            <Field label="N.º de vuelo" value={number} onChangeText={setNumber} />
+    <View style={styles.screen}>
+      <View style={styles.form}>
+        <View style={styles.row}>
+          <View style={[styles.fieldBox, styles.halfLeft]}>
+            <Text style={styles.label}>N.º de vuelo</Text>
+            <TextInput style={styles.input} onChangeText={setNumber} value={number} />
           </View>
-          <View style={forms.halfRight}>
-            <Field label="Fecha" value={date} onChangeText={setDate} />
-          </View>
-        </View>
-
-        <View style={forms.row}>
-          <View style={forms.halfLeft}>
-            <Field label="Origen" value={from} onChangeText={setFrom} />
-          </View>
-          <View style={forms.halfRight}>
-            <Field label="Destino" value={to} onChangeText={setTo} />
+          <View style={[styles.fieldBox, styles.halfRight]}>
+            <Text style={styles.label}>Fecha</Text>
+            <TextInput style={styles.input} onChangeText={setDate} value={date} />
           </View>
         </View>
 
-        <View style={forms.row}>
-          <View style={forms.halfLeft}>
-            <Field label="Salida (hora local)" value={dep} onChangeText={setDep} />
+        <View style={styles.row}>
+          <View style={[styles.fieldBox, styles.halfLeft]}>
+            <Text style={styles.label}>Origen</Text>
+            <TextInput style={styles.input} onChangeText={setFrom} value={from} />
           </View>
-          <View style={forms.halfRight}>
-            <Field label="Llegada (hora local)" value={arr} onChangeText={setArr} />
+          <View style={[styles.fieldBox, styles.halfRight]}>
+            <Text style={styles.label}>Destino</Text>
+            <TextInput style={styles.input} onChangeText={setTo} value={to} />
           </View>
         </View>
 
-        <Field label="Avión" value={aircraft} onChangeText={setAircraft} />
+        <View style={styles.row}>
+          <View style={[styles.fieldBox, styles.halfLeft]}>
+            <Text style={styles.label}>Salida (hora local)</Text>
+            <TextInput style={styles.input} onChangeText={setDep} value={dep} />
+          </View>
+          <View style={[styles.fieldBox, styles.halfRight]}>
+            <Text style={styles.label}>Llegada (hora local)</Text>
+            <TextInput style={styles.input} onChangeText={setArr} value={arr} />
+          </View>
+        </View>
+
+        <View style={styles.fieldBox}>
+          <Text style={styles.label}>Avión</Text>
+          <TextInput style={styles.input} onChangeText={setAircraft} value={aircraft} />
+        </View>
       </View>
 
-      <View style={forms.bottomBar}>
-        <Button label="Guardar cambios" icon="save-outline" onPress={() => router.back()} />
-        <Button label="Eliminar vuelo" kind="danger" icon="trash-outline" onPress={() => setConfirming(true)} />
-      </View>
+      <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
+        <Pressable style={styles.primaryButton} onPress={() => router.back()}>
+          <Ionicons name="save-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Text style={styles.primaryButtonText}>Guardar cambios</Text>
+        </Pressable>
+        <Pressable style={styles.dangerButton} onPress={() => setConfirming(true)}>
+          <Ionicons name="trash-outline" size={20} color={colors.red} style={styles.buttonIcon} />
+          <Text style={styles.dangerButtonText}>Eliminar vuelo</Text>
+        </Pressable>
+      </SafeAreaView>
 
-      <Modal visible={confirming} animationType="fade" transparent>
+      <Modal visible={confirming} animationType="fade" transparent onRequestClose={() => setConfirming(false)}>
         <View style={styles.overlay}>
           <View style={styles.dialog}>
             <View style={styles.dialogIcon}>
               <Ionicons name="trash-outline" size={28} color={colors.red} />
             </View>
-            <Text style={common.title}>¿Eliminar vuelo {number}?</Text>
+            <Text style={styles.dialogTitle}>¿Eliminar vuelo {number}?</Text>
             <Text style={styles.dialogText}>
               Se quitará del calendario y de Vuelos programados. Esta acción no se puede deshacer.
             </Text>
 
             <View style={styles.dialogButtons}>
-              <View style={styles.dialogButtonLeft}>
-                <Button label="Cancelar" kind="secondary" onPress={() => setConfirming(false)} />
-              </View>
-              <View style={styles.dialogButtonRight}>
-                <Button label="Eliminar" kind="danger" onPress={deleteFlight} />
-              </View>
+              <Pressable style={styles.cancelButton} onPress={() => setConfirming(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </Pressable>
+              <Pressable style={styles.deleteButton} onPress={deleteFlight}>
+                <Text style={styles.deleteButtonText}>Eliminar</Text>
+              </Pressable>
             </View>
           </View>
         </View>

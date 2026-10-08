@@ -1,12 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/button';
-import { Field } from '@/components/field';
-import { common } from '@/styles/common';
-import { flights as styles } from '@/styles/flights';
-import { forms } from '@/styles/forms';
+import { colors } from '@/constants/theme';
+import { styles } from '@/styles/add-flight-manual-styles';
 
 // Agregar un vuelo cargando los datos a mano.
 export default function AddFlightManualScreen() {
@@ -19,41 +18,95 @@ export default function AddFlightManualScreen() {
   const [aircraft, setAircraft] = useState('');
 
   return (
-    <View style={common.screen}>
-      <View style={[styles.screenBody, common.screen]}>
-        <View style={forms.row}>
-          <View style={forms.halfLeft}>
-            <Field label="N.º de vuelo" value={number} onChangeText={setNumber} placeholder="Ej: AR1204" />
+    <View style={styles.screen}>
+      <View style={styles.form}>
+        <View style={styles.row}>
+          <View style={[styles.fieldBox, styles.halfLeft]}>
+            <Text style={styles.label}>N.º de vuelo</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setNumber}
+              value={number}
+              placeholder="Ej: AR1204"
+              placeholderTextColor={colors.textFaint}
+            />
           </View>
-          <View style={forms.halfRight}>
-            <Field label="Fecha" value={date} onChangeText={setDate} placeholder="DD/MM/AAAA" />
-          </View>
-        </View>
-
-        <View style={forms.row}>
-          <View style={forms.halfLeft}>
-            <Field label="Origen" value={from} onChangeText={setFrom} placeholder="IATA" />
-          </View>
-          <View style={forms.halfRight}>
-            <Field label="Destino" value={to} onChangeText={setTo} placeholder="IATA" />
-          </View>
-        </View>
-
-        <View style={forms.row}>
-          <View style={forms.halfLeft}>
-            <Field label="Salida (hora local)" value={dep} onChangeText={setDep} placeholder="--:--" />
-          </View>
-          <View style={forms.halfRight}>
-            <Field label="Llegada (hora local)" value={arr} onChangeText={setArr} placeholder="--:--" />
+          <View style={[styles.fieldBox, styles.halfRight]}>
+            <Text style={styles.label}>Fecha</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setDate}
+              value={date}
+              placeholder="DD/MM/AAAA"
+              placeholderTextColor={colors.textFaint}
+            />
           </View>
         </View>
 
-        <Field label="Avión" value={aircraft} onChangeText={setAircraft} placeholder="Ej: Boeing 737-800" />
+        <View style={styles.row}>
+          <View style={[styles.fieldBox, styles.halfLeft]}>
+            <Text style={styles.label}>Origen</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setFrom}
+              value={from}
+              placeholder="IATA"
+              placeholderTextColor={colors.textFaint}
+            />
+          </View>
+          <View style={[styles.fieldBox, styles.halfRight]}>
+            <Text style={styles.label}>Destino</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setTo}
+              value={to}
+              placeholder="IATA"
+              placeholderTextColor={colors.textFaint}
+            />
+          </View>
+        </View>
+
+        <View style={styles.row}>
+          <View style={[styles.fieldBox, styles.halfLeft]}>
+            <Text style={styles.label}>Salida (hora local)</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setDep}
+              value={dep}
+              placeholder="--:--"
+              placeholderTextColor={colors.textFaint}
+            />
+          </View>
+          <View style={[styles.fieldBox, styles.halfRight]}>
+            <Text style={styles.label}>Llegada (hora local)</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setArr}
+              value={arr}
+              placeholder="--:--"
+              placeholderTextColor={colors.textFaint}
+            />
+          </View>
+        </View>
+
+        <View style={styles.fieldBox}>
+          <Text style={styles.label}>Avión</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={setAircraft}
+            value={aircraft}
+            placeholder="Ej: Boeing 737-800"
+            placeholderTextColor={colors.textFaint}
+          />
+        </View>
       </View>
 
-      <View style={forms.bottomBar}>
-        <Button label="Guardar vuelo" icon="save-outline" onPress={() => router.back()} />
-      </View>
+      <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
+        <Pressable style={styles.primaryButton} onPress={() => router.back()}>
+          <Ionicons name="save-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Text style={styles.primaryButtonText}>Guardar vuelo</Text>
+        </Pressable>
+      </SafeAreaView>
     </View>
   );
 }

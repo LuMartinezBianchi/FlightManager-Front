@@ -5,9 +5,7 @@ import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { sections } from '@/data/flights';
-import { calendar } from '@/styles/calendar';
-import { common } from '@/styles/common';
-import { flights as styles } from '@/styles/flights';
+import { styles } from '@/styles/edit-flights-styles';
 
 // Modificar vuelos: lista de vuelos programados, cada uno con su lapiz para editarlo.
 export default function EditFlightsScreen() {
@@ -25,7 +23,7 @@ export default function EditFlightsScreen() {
   }
 
   return (
-    <View style={common.screen}>
+    <View style={styles.screen}>
       <SectionList
         sections={filtered}
         keyExtractor={(item) => item.number}
@@ -44,13 +42,13 @@ export default function EditFlightsScreen() {
         }
         renderSectionHeader={({ section }) => <Text style={styles.day}>{section.title}</Text>}
         renderItem={({ item }) => (
-          <View style={[common.card, styles.editRow]}>
-            <View style={styles.editRowText}>
-              <Text style={calendar.flightNumber}>Vuelo {item.number}</Text>
-              <Text style={styles.editRowRoute}>
+          <View style={styles.row}>
+            <View style={styles.rowText}>
+              <Text style={styles.flightNumber}>Vuelo {item.number}</Text>
+              <Text style={styles.route}>
                 {item.from} → {item.to} · {item.dep} – {item.arr}
               </Text>
-              <Text style={calendar.duration}>{item.aircraft}</Text>
+              <Text style={styles.aircraft}>{item.aircraft}</Text>
             </View>
 
             <Pressable style={styles.editButton} onPress={() => router.push('/edit-flight')}>

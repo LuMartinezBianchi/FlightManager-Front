@@ -4,19 +4,9 @@ import { useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Chip } from '@/components/chip';
 import { colors } from '@/constants/theme';
 import { logRecords, sumHours } from '@/data/flight-log';
-import { common } from '@/styles/common';
-import { flightLog as styles } from '@/styles/flight-log';
-
-function Checkbox({ on }: { on: boolean }) {
-  return (
-    <View style={[styles.checkbox, on && styles.checkboxOn]}>
-      {on && <Ionicons name="checkmark" size={16} color={colors.onAccent} />}
-    </View>
-  );
-}
+import { styles } from '@/styles/flight-log-styles';
 
 // Pantalla 4: Libro de vuelo. Se seleccionan registros para exportar,
 // o se pasa al modo edicion para modificar uno.
@@ -44,11 +34,11 @@ export default function FlightLogScreen() {
   }
 
   return (
-    <SafeAreaView style={common.screen} edges={['top']}>
-      <View style={[common.header, common.gutter]}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <View style={[styles.header, styles.gutter]}>
         <View>
-          <Text style={common.title}>Libro de vuelo</Text>
-          <Text style={common.subtitle}>42 registros totales</Text>
+          <Text style={styles.title}>Libro de vuelo</Text>
+          <Text style={styles.subtitle}>42 registros totales</Text>
         </View>
 
         <Pressable style={[styles.editToggle, editing && styles.editToggleOn]} onPress={() => setEditing(!editing)}>
@@ -66,10 +56,14 @@ export default function FlightLogScreen() {
           editing ? null : (
             <Pressable style={styles.selectRow} onPress={toggleAll}>
               <View style={styles.selectAll}>
-                <Checkbox on={allSelected} />
+                <View style={[styles.checkbox, allSelected && styles.checkboxOn]}>
+                  {allSelected && <Ionicons name="checkmark" size={16} color={colors.onAccent} />}
+                </View>
                 <Text style={styles.selectAllText}>Seleccionar todos</Text>
               </View>
-              <Chip label={`${selected.length} seleccionados`} tone="cyan" />
+              <View style={styles.chip}>
+                <Text style={styles.chipText}>{selected.length} seleccionados</Text>
+              </View>
             </Pressable>
           )
         }
@@ -77,10 +71,14 @@ export default function FlightLogScreen() {
           const on = !editing && selected.includes(item.number);
           return (
             <Pressable
-              style={[common.card, styles.record, on && styles.recordOn]}
+              style={[styles.record, on && styles.recordOn]}
               onPress={editing ? undefined : () => toggle(item.number)}
             >
-              {!editing && <Checkbox on={on} />}
+              {!editing && (
+                <View style={[styles.checkbox, on && styles.checkboxOn]}>
+                  {on && <Ionicons name="checkmark" size={16} color={colors.onAccent} />}
+                </View>
+              )}
 
               <View style={styles.recordInfo}>
                 <View style={styles.recordTop}>
@@ -98,7 +96,10 @@ export default function FlightLogScreen() {
               </View>
 
               {editing && (
-                <Pressable style={styles.pencil} onPress={() => router.push('/logbook-edit')}>
+                <Pressable
+                  style={styles.pencil}
+                  onPress={() => router.push({ pathname: '/logbook-entry', params: { mode: 'edit' } })}
+                >
                   <Ionicons name="pencil" size={16} color={colors.cyan} />
                 </Pressable>
               )}

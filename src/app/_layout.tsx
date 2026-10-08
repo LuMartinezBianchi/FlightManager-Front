@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-import { stackScreenOptions } from '@/styles/navigation';
+import { stackScreenOptions } from '@/styles/layout-styles';
 
 // Layout raiz: un Stack que contiene el grupo de tabs y las pantallas
 // que se abren por encima de la barra de tabs.
@@ -14,6 +14,9 @@ export default function RootLayout() {
       <Stack screenOptions={stackScreenOptions}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
+        {/* Detalle de un vuelo (al tocar una tarjeta de vuelo) */}
+        <Stack.Screen name="flight-detail" options={{ title: 'Detalle del vuelo' }} />
+
         {/* Agregar vuelos desde .xlsx */}
         <Stack.Screen name="add-flights" options={{ title: 'Agregar vuelos' }} />
         <Stack.Screen name="import-preview" options={{ title: 'Vista previa' }} />
@@ -25,8 +28,7 @@ export default function RootLayout() {
         <Stack.Screen name="edit-flight" options={{ title: 'Editar vuelo' }} />
 
         {/* Libro de vuelo */}
-        <Stack.Screen name="logbook-new" options={{ title: 'Cargar libro de vuelo' }} />
-        <Stack.Screen name="logbook-edit" options={{ title: 'Editar registro' }} />
+        <Stack.Screen name="logbook-entry" />
       </Stack>
     </>
   );

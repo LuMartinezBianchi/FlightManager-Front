@@ -2,14 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, SectionList, Text, View } from 'react-native';
 
-import { Button } from '@/components/button';
-import { Chip } from '@/components/chip';
-import { Steps } from '@/components/steps';
 import { colors } from '@/constants/theme';
-import { calendar } from '@/styles/calendar';
-import { common } from '@/styles/common';
-import { flights as styles } from '@/styles/flights';
-import { forms } from '@/styles/forms';
+import { styles } from '@/styles/import-preview-styles';
 
 type Row = { number: string; route: string; detail: string; error?: string };
 
@@ -36,33 +30,41 @@ const sections: { title: string; data: Row[] }[] = [
 // Agregar vuelos desde .xlsx, paso 2: revisar lo que se detecto en el archivo.
 export default function ImportPreviewScreen() {
   return (
-    <View style={common.screen}>
+    <View style={styles.screen}>
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.number}
         style={styles.list}
         ListHeaderComponent={
           <View>
-            <Steps step={2} label="Revisar vuelos" />
+            <View style={styles.steps}>
+              <View style={[styles.step, styles.stepOn]} />
+              <View style={[styles.step, styles.stepOn]} />
+              <View style={styles.step} />
+            </View>
+            <Text style={styles.stepLabel}>Paso 2 de 3 · Revisar vuelos</Text>
 
-            <View style={[common.card, styles.summary]}>
-              <Text style={calendar.flightNumber}>vuelos_agosto.xlsx</Text>
+            <View style={styles.summary}>
+              <Text style={styles.fileName}>vuelos_agosto.xlsx</Text>
               <View style={styles.chips}>
-                <View style={styles.chipSpace}>
-                  <Chip label="10 válidos" tone="green" />
+                <View style={styles.greenChip}>
+                  <Text style={styles.greenChipText}>10 válidos</Text>
                 </View>
-                <Chip label="2 con errores" tone="red" />
+                <View style={styles.redChip}>
+                  <Text style={styles.redChipText}>2 con errores</Text>
+                </View>
               </View>
             </View>
           </View>
         }
-        ListFooterComponent={<Text style={styles.moreText}>y 6 vuelos válidos más</Text>}
-        renderSectionHeader={({ section }) => <Text style={styles.day}>{section.title}</Text>}
+        ListFooterComponent={<Text style={styles.more}>y 6 vuelos válidos más</Text>}
+        renderSectionHeader={({ section }) => <Text style={styles.group}>{section.title}</Text>}
         renderItem={({ item }) => (
-          <View style={[common.card, styles.importRow, item.error && styles.importRowError]}>
-            <View
-              style={[styles.importMark, { backgroundColor: item.error ? colors.redSoft : colors.greenSoft }]}
-            >
+          <Pressable
+            style={[styles.row, item.error && styles.rowError]}
+            onPress={item.error ? () => router.push('/edit-flight') : undefined}
+          >
+            <View style={[styles.mark, { backgroundColor: item.error ? colors.redSoft : colors.greenSoft }]}>
               <Ionicons
                 name={item.error ? 'alert-circle-outline' : 'checkmark-circle-outline'}
                 size={20}
@@ -70,20 +72,28 @@ export default function ImportPreviewScreen() {
               />
             </View>
 
-            <View style={styles.importText}>
-              <Text style={calendar.flightNumber}>
+            <View style={styles.rowText}>
+              <Text style={styles.rowTitle}>
                 {item.number} · {item.route}
               </Text>
-              <Text style={calendar.label}>{item.detail}</Text>
+              <Text style={styles.rowDetail}>{item.detail}</Text>
+              {item.error && <Text style={styles.rowHint}>Tocá para corregir</Text>}
             </View>
 
-            {item.error && <Chip label={item.error} tone="red" />}
-          </View>
+            {item.error && (
+              <View style={styles.redChip}>
+                <Text style={styles.redChipText}>{item.error}</Text>
+              </View>
+            )}
+          </Pressable>
         )}
       />
 
-      <View style={forms.bottomBar}>
-        <Button label="Importar 10 vuelos" icon="cloud-upload-outline" href="/import-success" />
+      <View style={styles.bottomBar}>
+        <Pressable style={styles.primaryButton} onPress={() => router.push('/import-success')}>
+          <Ionicons name="cloud-upload-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Text style={styles.primaryButtonText}>Importar 10 vuelos</Text>
+        </Pressable>
         <Pressable onPress={() => router.back()}>
           <Text style={styles.changeFile}>Cambiar archivo</Text>
         </Pressable>

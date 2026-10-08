@@ -1,8 +1,19 @@
 import { colors, fontSize, radius, spacing } from '@/constants/theme';
 import { StyleSheet } from 'react-native';
 
-// Estilos de la pantalla Libro de vuelo (app/(tabs)/flight-log.tsx).
-export const flightLog = StyleSheet.create({
+// Estilos de la pantalla Libro de vuelo (app/(tabs)/flight-log.tsx) y de todo lo que se dibuja en ella.
+export const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.deep },
+  gutter: { paddingHorizontal: spacing.lg },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.md,
+  },
+  title: { color: colors.text, fontSize: fontSize.xl, fontWeight: '700' },
+  subtitle: { color: colors.textDim, fontSize: fontSize.sm, marginTop: 2 },
+
   editToggle: {
     padding: spacing.md,
     borderRadius: radius.md,
@@ -26,6 +37,13 @@ export const flightLog = StyleSheet.create({
   },
   selectAll: { flexDirection: 'row', alignItems: 'center' },
   selectAllText: { color: colors.text, fontSize: fontSize.md, fontWeight: 'bold', marginLeft: spacing.md },
+  chip: {
+    backgroundColor: colors.cyanSoft,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.round,
+  },
+  chipText: { color: colors.cyan, fontSize: fontSize.sm, fontWeight: '700' },
   checkbox: {
     width: 24,
     height: 24,
@@ -38,7 +56,16 @@ export const flightLog = StyleSheet.create({
   checkboxOn: { backgroundColor: colors.cyan, borderColor: colors.cyan },
 
   // ---------- Registro ----------
-  record: { flexDirection: 'row', alignItems: 'center', padding: spacing.lg, marginBottom: spacing.sm },
+  record: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.lg,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
   recordOn: { backgroundColor: colors.card2, borderColor: colors.cyan, borderWidth: 2 },
   recordInfo: { flex: 1, marginLeft: spacing.md },
   recordTop: { flexDirection: 'row', alignItems: 'center' },

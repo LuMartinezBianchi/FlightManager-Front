@@ -1,8 +1,9 @@
 import { colors, fontSize, radius, spacing } from '@/constants/theme';
 import { StyleSheet } from 'react-native';
 
-// Estilos de las pantallas con formularios y de sus componentes (Field, OptionGroup, Button, Steps)
-export const forms = StyleSheet.create({
+// Estilos del formulario del libro de vuelo (app/logbook-entry.tsx).
+export const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.deep },
   form: { padding: spacing.lg },
   info: { color: colors.textDim, fontSize: fontSize.sm, marginBottom: spacing.md },
   sectionTitle: {
@@ -15,13 +16,11 @@ export const forms = StyleSheet.create({
   },
 
   // ---------- Campos ----------
+  row: { flexDirection: 'row' },
+  halfLeft: { flex: 1, marginRight: spacing.md },
+  halfRight: { flex: 1 },
   fieldBox: { marginBottom: spacing.md },
-  label: {
-    color: colors.textDim,
-    fontSize: fontSize.sm,
-    fontWeight: 'bold',
-    marginBottom: spacing.xs,
-  },
+  label: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: 'bold', marginBottom: spacing.xs },
   input: {
     color: colors.text,
     fontSize: fontSize.md,
@@ -32,11 +31,6 @@ export const forms = StyleSheet.create({
     padding: spacing.md,
   },
   inputMultiline: { height: 100 },
-
-  // Dos campos en la misma fila
-  row: { flexDirection: 'row' },
-  halfLeft: { flex: 1, marginRight: spacing.md },
-  halfRight: { flex: 1 },
 
   // ---------- Opciones (Regular / No regular, VFR / IFR, etc.) ----------
   options: { flexDirection: 'row' },
@@ -54,26 +48,7 @@ export const forms = StyleSheet.create({
   optionText: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: 'bold' },
   optionTextOn: { color: colors.cyan },
 
-  // ---------- Botones ----------
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    marginBottom: spacing.sm,
-  },
-  buttonIcon: { marginRight: spacing.sm },
-  buttonPrimary: { backgroundColor: colors.cyan, borderColor: colors.cyan },
-  buttonSecondary: { backgroundColor: colors.card2, borderColor: colors.border },
-  buttonDanger: { backgroundColor: colors.redSoft, borderColor: colors.red },
-  buttonText: { fontSize: fontSize.lg, fontWeight: 'bold' },
-  buttonTextPrimary: { color: colors.onAccent },
-  buttonTextSecondary: { color: colors.text },
-  buttonTextDanger: { color: colors.red },
-
-  // Barra fija de abajo con el boton principal
+  // ---------- Barra de abajo ----------
   bottomBar: {
     backgroundColor: colors.panel,
     borderTopColor: colors.border,
@@ -81,9 +56,16 @@ export const forms = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xl,
   },
-
-  // ---------- Pasos de la importacion ----------
-  steps: { flexDirection: 'row', marginBottom: spacing.sm },
-  step: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.border, marginRight: spacing.xs },
-  stepOn: { backgroundColor: colors.cyan },
+  primaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    backgroundColor: colors.cyan,
+    borderColor: colors.cyan,
+  },
+  primaryButtonText: { color: colors.onAccent, fontSize: fontSize.lg, fontWeight: 'bold' },
+  buttonIcon: { marginRight: spacing.sm },
 });

@@ -3,13 +3,9 @@ import { router } from 'expo-router';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Chip } from '@/components/chip';
-import { FlightCard } from '@/components/flight-card';
 import { colors } from '@/constants/theme';
 import { sections } from '@/data/flights';
-import { calendar as styles } from '@/styles/calendar';
-import { common } from '@/styles/common';
-import { home } from '@/styles/home';
+import { styles } from '@/styles/index-styles';
 
 // Datos hardcodeados por ahora.
 const stats = [
@@ -18,39 +14,71 @@ const stats = [
   { value: '186', label: 'VUELOS / AÑO' },
 ];
 
+const flight = sections[0].data[0];
+
 const calendarImage = require('@/assets/images/calendar-placeholder.png');
 
 // Pantalla 1: Inicio.
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={common.screen} edges={['top']}>
-      <ScrollView contentContainerStyle={common.content}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.bigTitle}>Flight Manager</Text>
 
         <Image source={calendarImage} style={styles.calendar} resizeMode='contain' />
 
-        <View style={home.nextBox}>
-          <View style={home.nextRow}>
-            <Text style={home.nextLabel}>PRÓXIMO VUELO</Text>
-            <Chip label="Sale en 2 d 4 h" tone="cyan" />
+        <View style={styles.nextBox}>
+          <View style={styles.nextRow}>
+            <Text style={styles.nextLabel}>PRÓXIMO VUELO</Text>
+            <View style={styles.chip}>
+              <Text style={styles.chipText}>Sale en 2 d 4 h</Text>
+            </View>
           </View>
-          <FlightCard flight={sections[0].data[0]} />
+
+          <Pressable
+            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+            onPress={() => router.push('/flight-detail')}
+          >
+            <View style={styles.row}>
+              <Text style={styles.flightNumber}>Vuelo {flight.number}</Text>
+            </View>
+
+            <View style={styles.row}>
+              <View>
+                <Text style={styles.airportCode}>{flight.from}</Text>
+                <Text style={styles.label}>{flight.dep}</Text>
+              </View>
+
+              <View style={styles.routeMiddle}>
+                <View style={styles.routeLine} />
+                <Ionicons name="airplane" size={16} style={styles.planeIcon} />
+                <Text style={styles.duration}>{flight.duration}</Text>
+              </View>
+
+              <View style={styles.alignRight}>
+                <Text style={styles.airportCode}>{flight.to}</Text>
+                <Text style={styles.label}>{flight.arr}</Text>
+              </View>
+            </View>
+
+            <Text style={styles.label}>{flight.aircraft}</Text>
+          </Pressable>
         </View>
 
-        <Pressable style={home.alert} onPress={() => router.push('/flight-log')}>
-          <Ionicons name="book-outline" size={22} color={colors.amber} style={home.alertIcon} />
-          <View style={home.alertText}>
-            <Text style={home.alertTitle}>2 vuelos sin registrar</Text>
-            <Text style={home.alertSubtitle}>Completá el libro de vuelo para mantenerlo al día</Text>
+        <Pressable style={styles.alert} onPress={() => router.push('/flight-log')}>
+          <Ionicons name="book-outline" size={22} color={colors.amber} style={styles.alertIcon} />
+          <View style={styles.alertText}>
+            <Text style={styles.alertTitle}>2 vuelos sin registrar</Text>
+            <Text style={styles.alertSubtitle}>Completá el libro de vuelo para mantenerlo al día</Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={colors.amber} />
         </Pressable>
 
-        <View style={home.stats}>
+        <View style={styles.stats}>
           {stats.map((stat) => (
-            <View key={stat.label} style={[common.card, home.stat]}>
-              <Text style={common.title}>{stat.value}</Text>
-              <Text style={home.statLabel}>{stat.label}</Text>
+            <View key={stat.label} style={styles.stat}>
+              <Text style={styles.statValue}>{stat.value}</Text>
+              <Text style={styles.statLabel}>{stat.label}</Text>
             </View>
           ))}
         </View>

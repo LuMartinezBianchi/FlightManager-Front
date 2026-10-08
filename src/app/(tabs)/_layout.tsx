@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
-import { tabBarScreenOptions } from '@/styles/navigation';
+import { tabBarScreenOptions } from '@/styles/tabs-layout-styles';
 
 // Barra inferior con las 4 pantallas. Cada "name" es el nombre del archivo dentro de app/(tabs)/.
 export default function TabsLayout() {
