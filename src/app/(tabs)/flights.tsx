@@ -37,7 +37,7 @@ export default function FlightsScreen() {
         renderItem={({ item }) => (
           <Pressable
             style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-            onPress={() => router.push('/flight-detail')}
+            onPress={() => router.push('/flight')}
           >
             <View style={styles.row}>
               <Text style={styles.flightNumber}>Vuelo {item.number}</Text>

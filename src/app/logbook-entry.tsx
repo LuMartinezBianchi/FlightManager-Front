@@ -11,14 +11,14 @@ import { styles } from '@/styles/logbook-entry-styles';
 type Item = { key: string; label: string; placeholder?: string; options?: string[]; multiline?: boolean };
 
 // Campos del libro de vuelo que pide ANAC, agrupados por seccion.
-// Cada fila tiene 1 o 2 campos (los de 2 comparten la fila a partes iguales).
+
 const sections: { title: string; data: Item[][] }[] = [
   {
     title: 'Aeronave',
     data: [
       [
         { key: 'plate', label: 'Matrícula', placeholder: 'Ej: LV-ABC' },
-        { key: 'type', label: 'Tipo / modelo' },
+        { key: 'type', label: 'Tipo de aeronave' },
       ],
       [{ key: 'operator', label: 'Explotador' }],
     ],
@@ -48,12 +48,12 @@ const sections: { title: string; data: Item[][] }[] = [
     title: 'Horarios (UTC)',
     data: [
       [
-        { key: 'blockOff', label: 'Calzos fuera', placeholder: '--:--' },
+        { key: 'blockOff', label: 'blockOff', placeholder: '--:--' },
         { key: 'takeoff', label: 'Despegue', placeholder: '--:--' },
       ],
       [
         { key: 'landing', label: 'Aterrizaje', placeholder: '--:--' },
-        { key: 'blockOn', label: 'Calzos puestos', placeholder: '--:--' },
+        { key: 'blockOn', label: 'blockOn', placeholder: '--:--' },
       ],
       [
         { key: 'flightTime', label: 'Tiempo de vuelo', placeholder: 'h:mm' },
@@ -91,7 +91,7 @@ const sections: { title: string; data: Item[][] }[] = [
       ],
       [
         { key: 'copilot', label: 'Copiloto' },
-        { key: 'copilotLicense', label: 'Licencia / N.º', placeholder: 'Tipo y N.º' },
+        { key: 'copilotLicense', label: 'Licencia / N.º', placeholder: 'N.º' },
       ],
       [{ key: 'cabin', label: 'Tripulantes de cabina' }],
     ],
@@ -114,7 +114,7 @@ const sections: { title: string; data: Item[][] }[] = [
 
 // Formulario del libro de vuelo con los datos que pide ANAC.
 // Se abre vacio para cargar un vuelo por primera vez (desde Próx. vuelo)
-// o con los datos cargados para editarlo (desde Libro de vuelo, con mode=edit).
+
 export default function LogbookEntryScreen() {
   const { mode } = useLocalSearchParams<{ mode?: string }>();
   const editing = mode === 'edit';

@@ -26,7 +26,7 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="next-flight"
+        name="flight"
         options={{
           title: 'Próx. vuelo',
           tabBarIcon: ({ color, size, focused }) => (

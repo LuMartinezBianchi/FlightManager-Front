@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '@/constants/theme';
 import { logRecords, sumHours } from '@/data/flight-log';
 import { styles } from '@/styles/flight-log-styles';
 
 // Pantalla 4: Libro de vuelo. Se seleccionan registros para exportar,
 // o se pasa al modo edicion para modificar uno.
+
 export default function FlightLogScreen() {
   const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState(['AR1204', 'AR1207', 'AR0980']);
@@ -57,7 +57,7 @@ export default function FlightLogScreen() {
             <Pressable style={styles.selectRow} onPress={toggleAll}>
               <View style={styles.selectAll}>
                 <View style={[styles.checkbox, allSelected && styles.checkboxOn]}>
-                  {allSelected && <Ionicons name="checkmark" size={16} color={colors.onAccent} />}
+                  {allSelected && <Ionicons name="checkmark" size={16} style={styles.checkboxOn} />}
                 </View>
                 <Text style={styles.selectAllText}>Seleccionar todos</Text>
               </View>
@@ -76,7 +76,7 @@ export default function FlightLogScreen() {
             >
               {!editing && (
                 <View style={[styles.checkbox, on && styles.checkboxOn]}>
-                  {on && <Ionicons name="checkmark" size={16} color={colors.onAccent} />}
+                  {on && <Ionicons name="checkmark" size={16} style={styles.checkboxOn} />}
                 </View>
               )}
 
@@ -100,7 +100,7 @@ export default function FlightLogScreen() {
                   style={styles.pencil}
                   onPress={() => router.push({ pathname: '/logbook-entry', params: { mode: 'edit' } })}
                 >
-                  <Ionicons name="pencil" size={16} color={colors.cyan} />
+                  <Ionicons name="pencil" size={16} style={styles.pencilIcon} />
                 </Pressable>
               )}
             </Pressable>
@@ -116,7 +116,7 @@ export default function FlightLogScreen() {
           </View>
 
           <Pressable style={styles.exportButton}>
-            <Ionicons name="download-outline" size={20} color={colors.onAccent} style={styles.exportIcon} />
+            <Ionicons name="download-outline" size={20} style={styles.exportIcon} />
             <Text style={styles.exportButtonText}>Exportar</Text>
           </Pressable>
         </View>

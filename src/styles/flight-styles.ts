@@ -2,7 +2,7 @@ import { colors, fontSize, radius, spacing } from '@/constants/theme';
 import { StyleSheet } from 'react-native';
 
 
-// Estilos de la pantalla Proximo vuelo (app/(tabs)/next-flight.tsx) y de todo lo que se dibuja en ella.
+// Estilos de la pantalla vuelo (app/flight.tsx) y de todo lo que se dibuja en ella.
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.deep },
   gutter: { paddingHorizontal: spacing.lg },

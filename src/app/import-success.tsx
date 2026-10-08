@@ -16,7 +16,7 @@ export default function ImportSuccessScreen() {
         </View>
         <Text style={styles.title}>¡Vuelos importados!</Text>
         <Text style={styles.text}>
-          Se agregaron 10 vuelos al calendario. Las 2 filas con errores quedaron sin importar.
+          Se agregaron todos los vuelos al calendario.
         </Text>
       </View>
 

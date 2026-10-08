@@ -107,4 +107,6 @@ export const styles = StyleSheet.create({
   },
   exportIcon: { marginRight: spacing.sm },
   exportButtonText: { color: colors.onAccent, fontSize: fontSize.lg, fontWeight: 'bold' },
+
+  pencilIcon: { color: colors.cyan },
 });
