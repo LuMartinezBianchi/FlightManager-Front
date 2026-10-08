@@ -15,7 +15,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false , title: "Volver"}} />
 
         {/* Detalle de un vuelo (al tocar una tarjeta de vuelo) */}
-        <Stack.Screen name="flight-detail" options={{ title: 'Detalle del vuelo' }} />
+        <Stack.Screen name="flight" options={{ title: 'Detalle del vuelo' }} />
 
         {/* Agregar vuelos desde .xlsx */}
         <Stack.Screen name="add-flights" options={{ title: 'Agregar vuelos' }} />

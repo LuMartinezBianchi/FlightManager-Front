@@ -3,9 +3,7 @@ import { useRouter } from 'expo-router';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { styles } from '@/styles/next-flight-styles';
-
-
+import { styles } from '@/styles/flight-styles';
 
 const FLIGHT = {
   code: 'AR1204',
@@ -27,17 +25,19 @@ const WEATHER = [
 ];
 
 const CREW = [
-  { id: '1', initials: 'MF', name: 'Martín Fernández', role: 'Capitán' },
-  { id: '2', initials: 'LC', name: 'Laura Castillo',   role: 'Primer Oficial' },
-  { id: '3', initials: 'RP', name: 'Roberto Paz',      role: 'Tripulante de Cabina' },
-  { id: '4', initials: 'SG', name: 'Sofía García',     role: 'Tripulante de Cabina' },
+  { id: '1', name: 'Martín Fernández', role: 'Capitán' },
+  { id: '2', name: 'Laura Castillo',   role: 'Primer Oficial' },
+  { id: '3', name: 'Roberto Paz',      role: 'Tripulante de Cabina' },
+  { id: '4', name: 'Sofía García',     role: 'Tripulante de Cabina' },
 ];
 
-function SectionLabel({ title, right }: { title: string; right?: string }) {
+
+// --- Titulitos de secciones y items de listas ---
+function SectionLabel({ title, summary }: { title: string; summary?: string }) {
   return (
     <View style={styles.sectionLabel}>
       <Text style={styles.sectionLabelTitle}>{title}</Text>
-      {right && <Text style={styles.sectionLabelSubtitle}>{right}</Text>}
+      {summary && <Text style={styles.sectionLabelSubtitle}>{summary}</Text>}
     </View>
   );
 }
@@ -75,7 +75,7 @@ function WeatherItem({ item }: { item: (typeof WEATHER)[0] }) {
 
 function CrewItem({ item, isLast }: { item: (typeof CREW)[0]; isLast: boolean }) {
   return (
-    <>
+    <View>
       <View style={styles.crewRow}>
         <View style={{ flex: 1 }}>
           <Text style={styles.crewmateName}>{item.name}</Text>
@@ -83,7 +83,7 @@ function CrewItem({ item, isLast }: { item: (typeof CREW)[0]; isLast: boolean })
         </View>
       </View>
       {!isLast && <View style={styles.sep} />}
-    </>
+    </View>
   );
 }
 
@@ -108,7 +108,6 @@ export default function NextFlightScreen() {
       <ScrollView
         style={styles.screen}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
       >
         <View style={[styles.card, styles.flightCard]}>
           <View style={{ flex: 1 }}>
@@ -126,14 +125,14 @@ export default function NextFlightScreen() {
         </View>
 
         <View>
-          <SectionLabel title="Ruta en mapa" right={`${FLIGHT.origin.iata} → ${FLIGHT.destination.iata}`} />
+          <SectionLabel title="Ruta en mapa" />
           <View style={styles.mapPlaceholder}>
             <Text style={{color:'#ffffff'}}>Mapa de ruta</Text>
           </View>
         </View>
 
         <View>
-          <SectionLabel title="NOTAMs" right={`${NOTAMS.length} activos`} />
+          <SectionLabel title="NOTAMs" summary ={`${NOTAMS.length} activos`} />
           <FlatList
             data={NOTAMS}
             keyExtractor={(item) => item.id}
@@ -144,7 +143,7 @@ export default function NextFlightScreen() {
         </View>
 
         <View>
-          <SectionLabel title="Meteorología" right="Actualizado 08:50" />
+          <SectionLabel title="Meteorología" summary="Actualizado 08:50" />
           <FlatList
             data={WEATHER}
             keyExtractor={(item) => item.id}
@@ -162,7 +161,7 @@ export default function NextFlightScreen() {
         </Pressable>
 
         <View  style={{marginBottom:15}}>
-          <SectionLabel title="Tripulación" right={`${CREW.length} integrantes`} />
+          <SectionLabel title="Tripulación" summary={`${CREW.length} integrantes`} />
           <View style={[styles.card, { overflow: 'hidden' }]}>
             <FlatList
               data={CREW}

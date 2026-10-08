@@ -16,13 +16,13 @@ export default function ImportSuccessScreen() {
         </View>
         <Text style={styles.title}>¡Vuelos importados!</Text>
         <Text style={styles.text}>
-          Se agregaron 10 vuelos al calendario. Las 2 filas con errores quedaron sin importar.
+          Se agregaron todos los vuelos al calendario.
         </Text>
       </View>
 
       <View style={styles.bottomBar}>
         <Pressable style={styles.primaryButton} onPress={() => router.dismissTo('/flights')}>
-          <Ionicons name="list-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
+          <Ionicons name="list-outline" size={20} style={styles.buttonIcon} />
           <Text style={styles.primaryButtonText}>Ver vuelos programados</Text>
         </Pressable>
         <Pressable style={styles.secondaryButton} onPress={() => router.dismissTo('/')}>

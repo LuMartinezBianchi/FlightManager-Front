@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, SectionList, Text, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
 import { styles } from '@/styles/import-preview-styles';
 
 type Row = { number: string; route: string; detail: string; error?: string };
@@ -37,13 +36,6 @@ export default function ImportPreviewScreen() {
         style={styles.list}
         ListHeaderComponent={
           <View>
-            <View style={styles.steps}>
-              <View style={[styles.step, styles.stepOn]} />
-              <View style={[styles.step, styles.stepOn]} />
-              <View style={styles.step} />
-            </View>
-            <Text style={styles.stepLabel}>Paso 2 de 3 · Revisar vuelos</Text>
-
             <View style={styles.summary}>
               <Text style={styles.fileName}>vuelos_agosto.xlsx</Text>
               <View style={styles.chips}>
@@ -58,17 +50,18 @@ export default function ImportPreviewScreen() {
           </View>
         }
         ListFooterComponent={<Text style={styles.more}>y 6 vuelos válidos más</Text>}
+        
         renderSectionHeader={({ section }) => <Text style={styles.group}>{section.title}</Text>}
         renderItem={({ item }) => (
           <Pressable
             style={[styles.row, item.error && styles.rowError]}
             onPress={item.error ? () => router.push('/edit-flight') : undefined}
           >
-            <View style={[styles.mark, { backgroundColor: item.error ? colors.redSoft : colors.greenSoft }]}>
+            <View style={[styles.mark]}>
               <Ionicons
                 name={item.error ? 'alert-circle-outline' : 'checkmark-circle-outline'}
                 size={20}
-                color={item.error ? colors.red : colors.green}
+                color={item.error ? 'red' : 'green'}
               />
             </View>
 
@@ -91,8 +84,8 @@ export default function ImportPreviewScreen() {
 
       <View style={styles.bottomBar}>
         <Pressable style={styles.primaryButton} onPress={() => router.push('/import-success')}>
-          <Ionicons name="cloud-upload-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
-          <Text style={styles.primaryButtonText}>Importar 10 vuelos</Text>
+          <Ionicons name="cloud-upload-outline" size={20} style={styles.buttonIcon} />
+          <Text style={styles.primaryButtonText}>Importar vuelos</Text>
         </Pressable>
         <Pressable onPress={() => router.back()}>
           <Text style={styles.changeFile}>Cambiar archivo</Text>

@@ -5,13 +5,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.deep },
   list: { paddingLeft: spacing.lg, paddingRight: spacing.lg },
-
-  // ---------- Pasos ----------
-  steps: { flexDirection: 'row', marginBottom: spacing.sm },
-  step: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.border, marginRight: spacing.xs },
-  stepOn: { backgroundColor: colors.cyan },
-  stepLabel: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: '600', marginBottom: spacing.md },
-
+  
   // ---------- Resumen del archivo ----------
   summary: {
     padding: spacing.md,

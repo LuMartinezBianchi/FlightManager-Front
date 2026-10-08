@@ -2,7 +2,7 @@ import { colors, fontSize, radius, spacing } from '@/constants/theme';
 import { StyleSheet } from 'react-native';
 
 
-// Estilos de la pantalla Proximo vuelo (app/(tabs)/next-flight.tsx) y de todo lo que se dibuja en ella.
+// Estilos de la pantalla vuelo (app/flight.tsx) y de todo lo que se dibuja en ella.
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.deep },
   gutter: { paddingHorizontal: spacing.lg },
@@ -98,7 +98,4 @@ export const styles = StyleSheet.create({
   logbookBtnText: { color: colors.text, fontSize: fontSize.lg, fontWeight: '600' },
 
   crewRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.md, gap: spacing.md },
-  avatar:  { width: 40, height: 40, borderRadius: radius.round, backgroundColor: colors.panel, alignItems: 'center', justifyContent: 'center' },
-  mailBtn: { width: 36, height: 36, borderRadius: radius.md, backgroundColor: colors.card2, alignItems: 'center', justifyContent: 'center' },
-  backBtn: { width: 32, height: 32, borderRadius: radius.round, backgroundColor: colors.card2, alignItems: 'center', justifyContent: 'center' },
 });
