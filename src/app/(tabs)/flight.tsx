@@ -1,9 +1,11 @@
-import { FlightMap, type Airport } from '@/components/flight-map';
+import { FlightMap } from '@/components/flight-map';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { FlatList, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { API_URL, fetchMapaVuelo, type MapaVuelo } from '@/api/mapa';
 import { styles } from '@/styles/flight-styles';
 
 const FLIGHT = {
@@ -13,13 +15,6 @@ const FLIGHT = {
   origin: { iata: 'EZE', name: 'Ezeiza' },
   destination: { iata: 'COR', name: 'Córdoba' },
   duration: '1H 50M · DIRECTO',
-};
-
-const DEPARTURE_AIRPORT: Airport = {
-  iata: 'EZE',
-  name: 'Aeropuerto Internacional de Ezeiza',
-  latitude: -34.8222,
-  longitude: -58.5358,
 };
 
 const NOTAMS = [
@@ -98,6 +93,15 @@ function CrewItem({ item, isLast }: { item: (typeof CREW)[0]; isLast: boolean })
 
 export default function NextFlightScreen() {
   const router = useRouter();
+  const [mapa, setMapa] = useState<MapaVuelo | null>(null);
+  const [mapaError, setMapaError] = useState<string | null>(null);
+
+  // El mapa (aeropuertos y ruta) viene de la API, no del front
+  useEffect(() => {
+    fetchMapaVuelo(FLIGHT.code)
+      .then(setMapa)
+      .catch((error: Error) => setMapaError(error.message));
+  }, []);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -132,14 +136,18 @@ export default function NextFlightScreen() {
           </View>
         </View>
 
-        <Pressable
-          style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
-          onPress={() =>
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=Aeropuerto+Internacional+Ezeiza+EZE')
-          }
-        >
-          <Text style={styles.logbookBtnText}>Ver aeropuerto en mapa</Text>
-        </Pressable>
+        {mapa && (
+          <Pressable
+            style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
+            onPress={() =>
+              Linking.openURL(
+                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapa.origin.name)}`
+              )
+            }
+          >
+            <Text style={styles.logbookBtnText}>Ver aeropuerto en mapa</Text>
+          </Pressable>
+        )}
 
         {/*<View>
           <SectionLabel title="Ruta en mapa" />
@@ -150,7 +158,8 @@ export default function NextFlightScreen() {
 
         <View>
           <SectionLabel title="Ruta en mapa" />
-          <FlightMap airport={DEPARTURE_AIRPORT} />
+          {mapa && <FlightMap origin={mapa.origin} destination={mapa.destination} />}
+          {!mapa && <Text style={styles.subtitle}>{mapaError ?? `Cargando mapa desde ${API_URL}…`}</Text>}
         </View>
 
         <View>
