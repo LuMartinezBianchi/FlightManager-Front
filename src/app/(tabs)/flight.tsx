@@ -1,3 +1,4 @@
+import { FlightMap, type Airport } from '@/components/flight-map';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FlatList, Linking, Pressable, ScrollView, Text, View } from 'react-native';
@@ -12,6 +13,13 @@ const FLIGHT = {
   origin: { iata: 'EZE', name: 'Ezeiza' },
   destination: { iata: 'COR', name: 'Córdoba' },
   duration: '1H 50M · DIRECTO',
+};
+
+const DEPARTURE_AIRPORT: Airport = {
+  iata: 'EZE',
+  name: 'Aeropuerto Internacional de Ezeiza',
+  latitude: -34.8222,
+  longitude: -58.5358,
 };
 
 const NOTAMS = [
@@ -133,11 +141,16 @@ export default function NextFlightScreen() {
           <Text style={styles.logbookBtnText}>Ver aeropuerto en mapa</Text>
         </Pressable>
 
-        <View>
+        {/*<View>
           <SectionLabel title="Ruta en mapa" />
           <View style={styles.mapPlaceholder}>
             <Text style={{ color: '#ffffff' }}>Mapa de ruta</Text>
           </View>
+        </View> */}
+
+        <View>
+          <SectionLabel title="Ruta en mapa" />
+          <FlightMap airport={DEPARTURE_AIRPORT} />
         </View>
 
         <View>
