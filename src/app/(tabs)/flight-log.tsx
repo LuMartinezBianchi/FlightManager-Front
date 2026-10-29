@@ -1,36 +1,57 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { logRecords, sumHours } from '@/data/flight-log';
+import { hasFlown, sumHours } from '@/data/flight-log';
+import { claveVuelo, useLibro } from '@/hooks/use-libro';
+import { tituloDia, useVuelos } from '@/hooks/use-vuelos';
+import { estadoLibro, type EstadoLibro } from '@/logbook/logbook-form';
 import { styles } from '@/styles/flight-log-styles';
 
-// Pantalla 4: Libro de vuelo. Se seleccionan registros para exportar,
-// o se pasa al modo edicion para modificar uno.
+const STATUS_STYLE = {
+  rojo: { card: styles.recordRed, text: styles.statusRed, label: 'Sin completar' },
+  amarillo: { card: styles.recordAmber, text: styles.statusAmber, label: 'Datos obligatorios' },
+  verde: { card: styles.recordGreen, text: styles.statusGreen, label: 'Completo' },
+} satisfies { [key in EstadoLibro]: object };
+
+// Pantalla 4: Libro de vuelo. Una tarjeta por cada vuelo que ya paso, con el borde segun lo completa que esta su hoja:
+// rojo (sin hoja), amarillo (solo lo obligatorio) o verde (hoja completa y firmada).
+// Se seleccionan registros para exportar, o se pasa al modo edicion para cargar/modificar uno.
 
 export default function FlightLogScreen() {
+  const { vuelos, loading, error } = useVuelos();
+  const { hojas } = useLibro();
   const [editing, setEditing] = useState(false);
-  const [selected, setSelected] = useState(['AR1204', 'AR1207', 'AR0980']);
+  const [selected, setSelected] = useState<string[]>([]);
 
-  const allSelected = selected.length === logRecords.length;
-  const selectedRecords = logRecords.filter((r) => selected.includes(r.number));
+  // Solo los vuelos que ya aterrizaron a la hora en la que se mira la pantalla, los mas recientes primero
+  const records = useMemo(() => {
+    const ahora = new Date();
+    const hojaPorVuelo = new Map(hojas.map((h) => [claveVuelo({ number: h.number, date: h.date }), h]));
+    return vuelos
+      .filter((v) => hasFlown(v, ahora))
+      .reverse()
+      .map((vuelo) => ({ vuelo, key: claveVuelo(vuelo), status: estadoLibro(hojaPorVuelo.get(claveVuelo(vuelo))) }));
+  }, [vuelos, hojas]);
 
-  function toggle(number: string) {
-    if (selected.includes(number)) {
-      setSelected(selected.filter((n) => n !== number));
+  // Solo se pueden exportar los vuelos con la hoja completa (verde)
+  const selectable = records.filter((r) => r.status === 'verde');
+  const selectedKeys = selected.filter((key) => selectable.some((r) => r.key === key));
+  const allSelected = selectable.length > 0 && selectedKeys.length === selectable.length;
+  const selectedRecords = selectable.filter((r) => selectedKeys.includes(r.key));
+
+  function toggle(key: string) {
+    if (selected.includes(key)) {
+      setSelected(selected.filter((k) => k !== key));
     } else {
-      setSelected([...selected, number]);
+      setSelected([...selected, key]);
     }
   }
 
   function toggleAll() {
-    if (allSelected) {
-      setSelected([]);
-    } else {
-      setSelected(logRecords.map((r) => r.number));
-    }
+    setSelected(allSelected ? [] : selectable.map((r) => r.key));
   }
 
   return (
@@ -38,7 +59,7 @@ export default function FlightLogScreen() {
       <View style={[styles.header, styles.gutter]}>
         <View>
           <Text style={styles.title}>Libro de vuelo</Text>
-          <Text style={styles.subtitle}>42 registros totales</Text>
+          <Text style={styles.subtitle}>{records.length} vuelos realizados</Text>
         </View>
 
         <Pressable style={[styles.editToggle, editing && styles.editToggleOn]} onPress={() => setEditing(!editing)}>
@@ -49,11 +70,16 @@ export default function FlightLogScreen() {
       </View>
 
       <FlatList
-        data={logRecords}
-        keyExtractor={(item) => item.number}
+        data={records}
+        keyExtractor={(item) => item.key}
         style={styles.list}
+        ListEmptyComponent={
+          <Text style={styles.subtitle}>
+            {loading ? 'Cargando vuelos…' : (error ?? 'Todavía no hay vuelos realizados')}
+          </Text>
+        }
         ListHeaderComponent={
-          editing ? null : (
+          editing || selectable.length === 0 ? undefined : (
             <Pressable style={styles.selectRow} onPress={toggleAll}>
               <View style={styles.selectAll}>
                 <View style={[styles.checkbox, allSelected && styles.checkboxOn]}>
@@ -62,43 +88,49 @@ export default function FlightLogScreen() {
                 <Text style={styles.selectAllText}>Seleccionar todos</Text>
               </View>
               <View style={styles.chip}>
-                <Text style={styles.chipText}>{selected.length} seleccionados</Text>
+                <Text style={styles.chipText}>{selectedKeys.length} seleccionados</Text>
               </View>
             </Pressable>
           )
         }
         renderItem={({ item }) => {
-          const on = !editing && selected.includes(item.number);
+          const { vuelo, status } = item;
+          const tone = STATUS_STYLE[status];
+          const canSelect = status === 'verde';
+          const on = !editing && canSelect && selected.includes(item.key);
           return (
             <Pressable
-              style={[styles.record, on && styles.recordOn]}
-              onPress={editing ? undefined : () => toggle(item.number)}
+              style={[styles.record, tone.card, on && styles.recordOn]}
+              onPress={editing || !canSelect ? undefined : () => toggle(item.key)}
             >
               {!editing && (
-                <View style={[styles.checkbox, on && styles.checkboxOn]}>
+                <View style={[styles.checkbox, on && styles.checkboxOn, !canSelect && styles.checkboxDisabled]}>
                   {on && <Ionicons name="checkmark" size={16} style={styles.checkboxOn} />}
                 </View>
               )}
 
               <View style={styles.recordInfo}>
                 <View style={styles.recordTop}>
-                  <Text style={styles.recordNumber}>{item.number}</Text>
-                  <Text style={styles.recordDate}>{item.date}</Text>
+                  <Text style={styles.recordNumber}>{vuelo.number}</Text>
+                  <Text style={styles.recordDate}>{tituloDia(vuelo.date)}</Text>
                 </View>
                 <Text style={styles.recordRoute}>
-                  {item.from} → {item.to}
+                  {vuelo.from} → {vuelo.to}
                 </Text>
+                <Text style={[styles.recordStatus, tone.text]}>{tone.label}</Text>
               </View>
 
               <View style={styles.hours}>
-                <Text style={styles.hoursValue}>{item.hours}</Text>
+                <Text style={styles.hoursValue}>{sumHours([vuelo.duration])}</Text>
                 <Text style={styles.hoursLabel}>HORAS</Text>
               </View>
 
               {editing && (
                 <Pressable
                   style={styles.pencil}
-                  onPress={() => router.push({ pathname: '/logbook-entry', params: { mode: 'edit' } })}
+                  onPress={() =>
+                    router.push({ pathname: '/logbook-entry', params: { number: vuelo.number, date: vuelo.date } })
+                  }
                 >
                   <Ionicons name="pencil" size={16} style={styles.pencilIcon} />
                 </Pressable>
@@ -111,8 +143,8 @@ export default function FlightLogScreen() {
       {!editing && (
         <View style={styles.exportBar}>
           <View>
-            <Text style={styles.exportLabel}>{selected.length} vuelos seleccionados</Text>
-            <Text style={styles.exportTotal}>{sumHours(selectedRecords.map((r) => r.hours))} hs totales</Text>
+            <Text style={styles.exportLabel}>{selectedKeys.length} vuelos seleccionados</Text>
+            <Text style={styles.exportTotal}>{sumHours(selectedRecords.map((r) => r.vuelo.duration))} hs totales</Text>
           </View>
 
           <Pressable style={styles.exportButton}>

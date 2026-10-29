@@ -54,6 +54,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   checkboxOn: { backgroundColor: colors.cyan, borderColor: colors.cyan },
+  checkboxDisabled: { opacity: 0.25 },
 
   // ---------- Registro ----------
   record: {
@@ -66,7 +67,15 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  recordOn: { backgroundColor: colors.card2, borderColor: colors.cyan, borderWidth: 2 },
+  // El borde indica el estado de la hoja del vuelo; la seleccion se marca con el fondo y el tilde
+  recordRed: { borderColor: colors.red, borderWidth: 2 },
+  recordAmber: { borderColor: colors.amber, borderWidth: 2 },
+  recordGreen: { borderColor: colors.green, borderWidth: 2 },
+  recordOn: { backgroundColor: colors.card2 },
+  recordStatus: { fontSize: fontSize.xs, fontWeight: '700', marginTop: spacing.xs },
+  statusRed: { color: colors.red },
+  statusAmber: { color: colors.amber },
+  statusGreen: { color: colors.green },
   recordInfo: { flex: 1, marginLeft: spacing.md },
   recordTop: { flexDirection: 'row', alignItems: 'center' },
   recordNumber: { color: colors.text, fontSize: fontSize.md, fontWeight: 'bold', marginRight: spacing.sm },

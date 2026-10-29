@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { agruparPorDia, useProgramacion, type DiaVuelos } from '@/hooks/use-programacion';
+import { agruparPorDia, useVuelos, type DiaVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/edit-flights-styles';
 
 // Modificar vuelos: lista de vuelos programados, cada uno con su lapiz para editarlo.
 export default function EditFlightsScreen() {
   const [search, setSearch] = useState('');
-  const { vuelos } = useProgramacion();
+  const { vuelos } = useVuelos();
   const sections = agruparPorDia(vuelos);
 
   // Se queda con los vuelos que contienen lo buscado, y con los dias que tengan alguno

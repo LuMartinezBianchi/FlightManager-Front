@@ -4,12 +4,12 @@ import { Pressable, SectionList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
-import { agruparPorDia, useProgramacion } from '@/hooks/use-programacion';
+import { agruparPorDia, useVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/flights-styles';
 
 // Pantalla 2: Vuelos programados. Desde aca se agregan y se modifican vuelos.
 export default function FlightsScreen() {
-  const { vuelos, loading, error } = useProgramacion();
+  const { vuelos, loading, error } = useVuelos();
   const sections = agruparPorDia(vuelos);
 
   let vacio = 'No hay vuelos programados. Agregalos desde .xlsx o a mano.';
@@ -31,7 +31,7 @@ export default function FlightsScreen() {
 
             <Pressable style={styles.primaryButton} onPress={() => router.push('/add-flights')}>
               <Ionicons name="grid-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
-              <Text style={styles.primaryButtonText}>Agregar vuelos desde .xlsx</Text>
+              <Text style={styles.primaryButtonText}>Agregar vuelos</Text>
             </Pressable>
 
             <Pressable style={styles.secondaryButton} onPress={() => router.push('/edit-flights')}>
@@ -45,7 +45,7 @@ export default function FlightsScreen() {
         renderItem={({ item }) => (
           <Pressable
             style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-            onPress={() => router.push({ pathname: '/flight', params: { number: item.number, date: item.date } })}
+            onPress={() => router.push({ pathname: '/flight-detail', params: { number: item.number, date: item.date } })}
           >
             <View style={styles.row}>
               <Text style={styles.flightNumber}>Vuelo {item.number}</Text>

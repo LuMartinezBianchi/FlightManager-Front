@@ -5,9 +5,9 @@ import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchAeropuertos } from '@/api/aeropuertos';
-import { deleteProgramacion, updateProgramacion, type Vuelo } from '@/api/programacion';
+import { deleteVuelo, updateVuelo, type Vuelo } from '@/api/vuelos';
 import { colors } from '@/constants/theme';
-import { useProgramacion } from '@/hooks/use-programacion';
+import { useVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/edit-flight-styles';
 import { type FormularioVuelo, validarVueloManual } from '@/utils/validar-vuelo-manual';
 
@@ -22,7 +22,7 @@ function aFechaFormulario(iso: string) {
 // Editar los datos de un vuelo. Recibe numero y fecha por parametro desde Modificar vuelos.
 export default function EditFlightScreen() {
   const { number, date } = useLocalSearchParams<{ number?: string; date?: string }>();
-  const { vuelos, loading } = useProgramacion();
+  const { vuelos, loading } = useVuelos();
   const vuelo = vuelos.find((v) => v.number === number && v.date === date);
 
   if (!vuelo) {
@@ -82,7 +82,7 @@ function EditForm({ vuelo }: { vuelo: Vuelo }) {
     setErrorGuardado(null);
     try {
       const [anio, mes, dia] = [form.date.slice(6, 10), form.date.slice(3, 5), form.date.slice(0, 2)];
-      await updateProgramacion(
+      await updateVuelo(
         { number: vuelo.number, date: vuelo.date },
         {
           number: form.number.trim().toUpperCase(),
@@ -93,7 +93,6 @@ function EditForm({ vuelo }: { vuelo: Vuelo }) {
           arr: form.arr.trim(),
           aircraft: form.aircraft.trim(),
           crew: form.crew.trim(),
-          source: vuelo.source,
         },
       );
       router.back();
@@ -106,7 +105,7 @@ function EditForm({ vuelo }: { vuelo: Vuelo }) {
   async function eliminar() {
     setConfirmando(false);
     try {
-      await deleteProgramacion({ number: vuelo.number, date: vuelo.date });
+      await deleteVuelo({ number: vuelo.number, date: vuelo.date });
       router.back();
     } catch (error) {
       setErrorGuardado((error as Error).message);

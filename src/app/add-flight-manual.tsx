@@ -5,7 +5,7 @@ import { Pressable, StyleProp, Text, TextInput, View, ViewStyle } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchAeropuertos } from '@/api/aeropuertos';
-import { createProgramacion, toIsoDate } from '@/api/programacion';
+import { createVuelos, toIsoDate } from '@/api/vuelos';
 import { colors } from '@/constants/theme';
 import { styles } from '@/styles/add-flight-manual-styles';
 import { type FormularioVuelo, validarVueloManual } from '@/utils/validar-vuelo-manual';
@@ -64,7 +64,7 @@ export default function AddFlightManualScreen() {
     setGuardando(true);
     setErrorGuardado(null);
     try {
-      await createProgramacion([
+      await createVuelos([
         {
           number: form.number.trim().toUpperCase(),
           date: toIsoDate(form.date),
@@ -74,7 +74,6 @@ export default function AddFlightManualScreen() {
           arr: form.arr.trim(),
           aircraft: form.aircraft.trim(),
           crew: form.crew.trim(),
-          source: 'manual',
         },
       ]);
       router.back();

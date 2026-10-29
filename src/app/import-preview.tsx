@@ -14,7 +14,8 @@ import {
   View,
 } from 'react-native';
 
-import { createProgramacion, toIsoDate } from '@/api/programacion';
+import { createProgramacion } from '@/api/programacion';
+import { createVuelos, toIsoDate } from '@/api/vuelos';
 import { colors } from '@/constants/theme';
 import { type DutyType, type ParsedDuty } from '@/data/flights';
 import { useFlightImport } from '@/hooks/useFlightImport';
@@ -74,12 +75,18 @@ export default function ImportPreviewScreen() {
 
   const canImport = grouped.validFlights.length > 0 && grouped.errorRows.length === 0;
 
-  // Guarda todas las filas validas juntas: si una falla (ej. vuelo repetido), la API no guarda ninguna
+  // Primero guarda el tipo de cada dia que no es un vuelo comun (deadhead, reserva, franco, sin asignar); si el dia ya
+  // estaba, solo le cambia el tipo. Despues guarda todos los vuelos juntos: si uno falla (ej. vuelo repetido), la API no guarda ninguno.
   async function importar() {
     setImporting(true);
     setImportError(null);
     try {
       await createProgramacion(
+        flights
+          .filter((duty) => !duty.error && duty.dutyType !== 'vuelo')
+          .map((duty) => ({ date: toIsoDate(duty.date), type: duty.dutyType })),
+      );
+      await createVuelos(
         grouped.validFlights.flatMap((duty) =>
           duty.flight
             ? [
@@ -93,7 +100,6 @@ export default function ImportPreviewScreen() {
                   duration: duty.flight.duration,
                   aircraft: duty.flight.aircraft,
                   crew: duty.flight.crew,
-                  source: 'parser' as const,
                 },
               ]
             : [],
