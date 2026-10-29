@@ -6,18 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, Tone, tones } from '@/constants/theme';
 import { buildCalendar, type DayStatus } from '@/data/calendar';
-import { hasFlown } from '@/data/flight-log';
+import { flightStats, hasFlown } from '@/data/flight-log';
 import { claveVuelo, useLibro } from '@/hooks/use-libro';
 import { useProgramacion } from '@/hooks/use-programacion';
 import { proximoVuelo, useVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/index-styles';
-
-// Datos hardcodeados por ahora.
-const stats = [
-  { value: '4.820', label: 'HS. TOTALES' },
-  { value: '42:10', label: 'ESTE MES' },
-  { value: '186', label: 'VUELOS / AÑO' },
-];
 
 // Calendario. Cada dia cargado usa el color de su tipo de actividad (vuelo, deadhead, reserva, franco o sin asignar).
 // Los datos vienen de la API: vuelos y programacion (ver data/calendar.ts).
@@ -55,6 +48,15 @@ export default function HomeScreen() {
   const { dias } = useProgramacion();
   const { hojas } = useLibro();
   const marks = useMemo(() => buildCalendar(vuelos, dias), [vuelos, dias]);
+  // Metricas: horas totales, horas del mes y vuelos del año, de los vuelos ya realizados
+  const stats = useMemo(() => {
+    const { totalHours, monthHours, yearFlights } = flightStats(vuelos, new Date());
+    return [
+      { value: totalHours, label: 'HS. TOTALES' },
+      { value: monthHours, label: 'ESTE MES' },
+      { value: yearFlights, label: 'VUELOS / AÑO' },
+    ];
+  }, [vuelos]);
   // Vuelos sin registrar: los que ya pasaron y todavia no tienen hoja en el libro
   const sinRegistrar = useMemo(() => {
     const conHoja = new Set(hojas.map((h) => claveVuelo({ number: h.number, date: h.date })));

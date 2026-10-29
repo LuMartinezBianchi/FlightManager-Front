@@ -114,6 +114,7 @@ export const styles = StyleSheet.create({
     borderRadius: radius.lg,
     backgroundColor: colors.cyan,
   },
+  exportButtonDisabled: { backgroundColor: colors.card2, opacity: 0.5 },
   exportIcon: { marginRight: spacing.sm },
   exportButtonText: { color: colors.onAccent, fontSize: fontSize.lg, fontWeight: 'bold' },
 

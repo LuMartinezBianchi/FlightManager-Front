@@ -27,3 +27,21 @@ export function hasFlown(flight: { date: string; dep: string; arr: string }, now
   if (arrH * 60 + arrM < depH * 60 + depM) llegada.setDate(llegada.getDate() + 1);
   return llegada <= now;
 }
+
+// Metricas del inicio, calculadas con los vuelos que ya se realizaron
+export function flightStats(flights: { date: string; dep: string; arr: string; duration: string }[], now: Date) {
+  const flown = flights.filter((f) => hasFlown(f, now));
+  const year = String(now.getFullYear());
+  const month = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+  const totalMinutes = flown.reduce((total, f) => total + durationToMinutes(f.duration), 0);
+  const monthMinutes = flown
+    .filter((f) => f.date.startsWith(month))
+    .reduce((total, f) => total + durationToMinutes(f.duration), 0);
+
+  return {
+    totalHours: Math.floor(totalMinutes / 60).toLocaleString('es-AR'),
+    monthHours: formatMinutes(monthMinutes),
+    yearFlights: String(flown.filter((f) => f.date.startsWith(year)).length),
+  };
+}

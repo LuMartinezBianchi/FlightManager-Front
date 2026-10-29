@@ -1,28 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { agruparPorDia, useVuelos, type DiaVuelos } from '@/hooks/use-vuelos';
+import { agruparPorDia, coincideBusqueda, useVuelos, vuelosFuturos, type DiaVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/edit-flights-styles';
 
 // Modificar vuelos: lista de vuelos programados, cada uno con su lapiz para editarlo.
 export default function EditFlightsScreen() {
   const [search, setSearch] = useState('');
   const { vuelos } = useVuelos();
-  const sections = agruparPorDia(vuelos);
 
-  // Se queda con los vuelos que contienen lo buscado, y con los dias que tengan alguno
-  const filtered: DiaVuelos[] = [];
-  for (const section of sections) {
-    const data = section.data.filter((f) =>
-      (f.number + f.from + f.to).toLowerCase().includes(search.toLowerCase()),
-    );
-    if (data.length > 0) {
-      filtered.push({ title: section.title, data: data });
-    }
-  }
+  // Sin busqueda solo se ven los vuelos futuros; al buscar (por numero, ruta o dia) aparecen tambien los anteriores
+  const filtered: DiaVuelos[] = useMemo(() => {
+    const candidatos = search.trim() ? vuelos : vuelosFuturos(vuelos);
+    return agruparPorDia(candidatos.filter((v) => coincideBusqueda(v, search)));
+  }, [vuelos, search]);
 
   return (
     <View style={styles.screen}>
@@ -37,7 +31,7 @@ export default function EditFlightsScreen() {
               style={styles.searchInput}
               onChangeText={setSearch}
               value={search}
-              placeholder="Buscar por n.º de vuelo o ruta"
+              placeholder="Buscar por n.º, ruta o día (24/08/2026)"
             />
           </View>
         }

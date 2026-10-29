@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { exportLibro } from '@/api/libro';
 import { hasFlown, sumHours } from '@/data/flight-log';
 import { claveVuelo, useLibro } from '@/hooks/use-libro';
 import { tituloDia, useVuelos } from '@/hooks/use-vuelos';
@@ -25,6 +26,7 @@ export default function FlightLogScreen() {
   const { hojas } = useLibro();
   const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [exporting, setExporting] = useState(false);
 
   // Solo los vuelos que ya aterrizaron a la hora en la que se mira la pantalla, los mas recientes primero
   const records = useMemo(() => {
@@ -47,6 +49,19 @@ export default function FlightLogScreen() {
       setSelected(selected.filter((k) => k !== key));
     } else {
       setSelected([...selected, key]);
+    }
+  }
+
+  const canExport = selectedRecords.length > 0 && !exporting;
+
+  async function exportar() {
+    setExporting(true);
+    try {
+      await exportLibro(selectedRecords.map((r) => ({ number: r.vuelo.number, date: r.vuelo.date })));
+    } catch (err) {
+      Alert.alert('No se pudo exportar', (err as Error).message);
+    } finally {
+      setExporting(false);
     }
   }
 
@@ -147,9 +162,14 @@ export default function FlightLogScreen() {
             <Text style={styles.exportTotal}>{sumHours(selectedRecords.map((r) => r.vuelo.duration))} hs totales</Text>
           </View>
 
-          <Pressable style={styles.exportButton}>
+          {/* Solo se puede exportar con vuelos verdes seleccionados; si no, el boton se ve apagado */}
+          <Pressable
+            style={[styles.exportButton, !canExport && styles.exportButtonDisabled]}
+            onPress={exportar}
+            disabled={!canExport}
+          >
             <Ionicons name="download-outline" size={20} style={styles.exportIcon} />
-            <Text style={styles.exportButtonText}>Exportar</Text>
+            <Text style={styles.exportButtonText}>{exporting ? 'Exportando…' : 'Exportar'}</Text>
           </Pressable>
         </View>
       )}

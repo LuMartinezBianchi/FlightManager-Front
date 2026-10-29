@@ -32,9 +32,26 @@ export function useVuelos() {
 export function agruparPorDia(vuelos: Vuelo[]): DiaVuelos[] {
   const grupos = new Map<string, Vuelo[]>();
   for (const vuelo of vuelos) {
-    grupos.set(vuelo.date, [...(grupos.get(vuelo.date) ?? []), vuelo]);
+    const delDia = grupos.get(vuelo.date);
+    if (delDia) delDia.push(vuelo);
+    else grupos.set(vuelo.date, [vuelo]);
   }
   return [...grupos].map(([fecha, data]) => ({ title: tituloDia(fecha), data }));
+}
+
+// Los vuelos que todavia no aterrizaron
+export function vuelosFuturos(vuelos: Vuelo[]) {
+  const ahora = new Date();
+  return vuelos.filter((v) => !hasFlown(v, ahora));
+}
+
+// Un vuelo coincide con lo buscado por numero, ruta o dia (acepta "24/08", "24/08/2026" o "2026-08-24")
+export function coincideBusqueda(vuelo: Vuelo, texto: string) {
+  const buscado = texto.trim().toLowerCase();
+  if (!buscado) return true;
+  const [anio, mes, dia] = vuelo.date.split('-');
+  const fecha = `${dia}/${mes}/${anio}`;
+  return (vuelo.number + vuelo.from + vuelo.to).toLowerCase().includes(buscado) || fecha.includes(buscado) || vuelo.date.includes(buscado);
 }
 
 // La fecha se arma en hora local para que no caiga un dia antes

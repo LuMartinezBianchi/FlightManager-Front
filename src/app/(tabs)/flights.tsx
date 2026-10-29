@@ -1,16 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { Pressable, SectionList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
-import { agruparPorDia, useVuelos } from '@/hooks/use-vuelos';
+import { agruparPorDia, useVuelos, vuelosFuturos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/flights-styles';
 
 // Pantalla 2: Vuelos programados. Desde aca se agregan y se modifican vuelos.
 export default function FlightsScreen() {
   const { vuelos, loading, error } = useVuelos();
-  const sections = agruparPorDia(vuelos);
+  // Solo los vuelos que todavia no pasaron; los anteriores se buscan desde "Modificar vuelos"
+  const proximos = useMemo(() => vuelosFuturos(vuelos), [vuelos]);
+  const sections = useMemo(() => agruparPorDia(proximos), [proximos]);
 
   let vacio = 'No hay vuelos programados. Agregalos desde .xlsx o a mano.';
   if (loading) vacio = 'Cargando vuelos…';
@@ -26,7 +29,7 @@ export default function FlightsScreen() {
           <View>
             <View style={styles.header}>
               <Text style={styles.title}>Próximos vuelos</Text>
-              <Text style={styles.count}>{vuelos.length} programados</Text>
+              <Text style={styles.count}>{proximos.length} programados</Text>
             </View>
 
             <Pressable style={styles.primaryButton} onPress={() => router.push('/add-flights')}>
