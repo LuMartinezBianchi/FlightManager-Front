@@ -19,6 +19,7 @@ export const styles = StyleSheet.create({
   row: { flexDirection: 'row' },
   halfLeft: { flex: 1, marginRight: spacing.md },
   halfRight: { flex: 1 },
+  halfSpacer: { flex: 1, marginLeft: spacing.md },
   fieldBox: { marginBottom: spacing.md },
   label: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: 'bold', marginBottom: spacing.xs },
   input: {
@@ -66,6 +67,8 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.cyan,
     borderColor: colors.cyan,
   },
+  primaryButtonDisabled: { opacity: 0.6 },
+  saveError: { textAlign: 'center', marginTop: 0, marginBottom: spacing.sm },
   primaryButtonText: { color: colors.onAccent, fontSize: fontSize.lg, fontWeight: 'bold' },
   buttonIcon: { marginRight: spacing.sm },
 });

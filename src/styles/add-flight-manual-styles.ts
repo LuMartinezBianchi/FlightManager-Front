@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
   },
+  multilineInput: { minHeight: 80, textAlignVertical: 'top' },
 
   // ---------- Barra de abajo ----------
   bottomBar: {

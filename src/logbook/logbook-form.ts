@@ -11,6 +11,8 @@ export type Field = {
   autoCapitalize?: 'characters' | 'none';
   // 'signature' muestra el pad de firma en lugar de un campo de texto
   kind?: 'signature';
+  // Un campo solo en su fila ocupa media fila, igual que los que van de a dos
+  half?: boolean;
   check?: (value: string) => string | null;
 };
 
@@ -52,7 +54,7 @@ function texto(min: number, max: number) {
     value.length >= min && value.length <= max ? null : `Entre ${min} y ${max} caracteres`;
 }
 
-// Campos que el piloto tiene que completar. Los tiempos son opcionales, pero si se cargan tienen que ser validos.
+// Campos que el piloto tiene que completar. Los tiempos y la firma son opcionales para guardar, pero si se cargan tienen que ser validos.
 export const sections: Section[] = [
   {
     title: 'Itinerario',
@@ -69,7 +71,7 @@ export const sections: Section[] = [
         { key: 'desde', label: 'Desde (OACI)', placeholder: 'SAEZ', required: true, autoCapitalize: 'characters', check: oaci },
         { key: 'hasta', label: 'Hasta (OACI)', placeholder: 'SACO', required: true, autoCapitalize: 'characters', check: oaci },
       ],
-      [{ key: 'horaLlegada', label: 'Hora de llegada', placeholder: '--:--', required: true, keyboardType: 'numbers-and-punctuation', check: hora }],
+      [{ key: 'horaLlegada', label: 'Hora de llegada', placeholder: '--:--', required: true, half: true, keyboardType: 'numbers-and-punctuation', check: hora }],
     ],
   },
   {
@@ -150,7 +152,7 @@ export const sections: Section[] = [
   },
   {
     title: 'Firma',
-    rows: [[{ key: 'firma', label: 'Firma del titular', required: true, kind: 'signature' }]],
+    rows: [[{ key: 'firma', label: 'Firma del titular', kind: 'signature' }]],
   },
 ];
 
@@ -194,4 +196,56 @@ export function validateLogbook(form: Record<string, string>): Record<string, st
   }
 
   return errors;
+}
+
+// ---------- Estado de la hoja de cada vuelo ----------
+
+// rojo: sin hoja guardada · amarillo: solo lo obligatorio · verde: hoja completa
+export type EstadoLibro = 'rojo' | 'amarillo' | 'verde';
+
+const vacio = (hoja: Record<string, string>, key: string) => !(hoja[key] ?? '').trim();
+const algunoCargado = (hoja: Record<string, string>, keys: string[]) => keys.some((key) => !vacio(hoja, key));
+
+const TRAVESIA_O_SOBRE = [
+  'sobreDiaPiloto', 'sobreDiaCopiloto', 'sobreNochePiloto', 'sobreNocheCopiloto',
+  'travesiaDiaPiloto', 'travesiaDiaCopiloto', 'travesiaNochePiloto', 'travesiaNocheCopiloto',
+];
+const DISCRIMINACION = ['instrumentoRealPiloto', 'instrumentoRealCopiloto', 'instrumentoCapota'];
+
+export function estadoLibro(hoja: Record<string, string> | undefined): EstadoLibro {
+  if (!hoja) return 'rojo';
+
+  const obligatorios = sections.flatMap((section) => section.rows.flat()).filter((field) => field.required);
+  if (obligatorios.some((field) => vacio(hoja, field.key))) return 'rojo';
+
+  const completa =
+    algunoCargado(hoja, TRAVESIA_O_SOBRE) &&
+    !vacio(hoja, 'aterrizajes') &&
+    algunoCargado(hoja, DISCRIMINACION) &&
+    !vacio(hoja, 'firma');
+  return completa ? 'verde' : 'amarillo';
+}
+
+// ---------- Pre-llenado desde el vuelo ----------
+
+type DatosVuelo = { date: string; from: string; to: string; aircraft: string | null };
+
+// Completa lo que se sabe del vuelo. Las horas de salida y llegada las carga el piloto.
+// icaoPorIata sale del catalogo de aeropuertos.
+export function prellenarDesdeVuelo(vuelo: DatosVuelo, icaoPorIata: Record<string, string>): Record<string, string> {
+  const [anio, mes, dia] = vuelo.date.split('-').map(Number);
+  const form: Record<string, string> = {
+    anio: String(anio),
+    mes: String(mes),
+    dia: String(dia),
+    desde: icaoPorIata[vuelo.from] ?? '',
+    hasta: icaoPorIata[vuelo.to] ?? '',
+  };
+
+  // El avion viene como texto libre: solo se usa si tiene forma de matricula (LV-GKM) o de marca (B-738)
+  const avion = (vuelo.aircraft ?? '').trim().toUpperCase();
+  if (/^[A-Z]{2}-[A-Z0-9]{3}$/.test(avion)) form.matricula = avion;
+  else if (MARCA.test(avion)) form.marca = avion;
+
+  return form;
 }

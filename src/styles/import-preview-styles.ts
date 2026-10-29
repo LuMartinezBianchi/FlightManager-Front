@@ -5,7 +5,12 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.deep },
   list: { paddingLeft: spacing.lg, paddingRight: spacing.lg },
-  
+
+  // ---------- Cargando / error global / vacio ----------
+  center: { flex: 1, backgroundColor: colors.deep, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  centerTitle: { color: colors.text, fontSize: fontSize.lg, fontWeight: '700', marginTop: spacing.md, textAlign: 'center' },
+  centerText: { color: colors.textDim, fontSize: fontSize.sm, marginTop: spacing.xs, marginBottom: spacing.lg, textAlign: 'center' },
+
   // ---------- Resumen del archivo ----------
   summary: {
     padding: spacing.md,
@@ -42,8 +47,6 @@ export const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: spacing.md,
     marginBottom: spacing.sm,
     backgroundColor: colors.card,
@@ -52,6 +55,35 @@ export const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   rowError: { borderColor: colors.red },
+  rowBody: { flexDirection: 'row', alignItems: 'center' },
+
+  // ---------- Chips de tipo de duty ----------
+  dutyChips: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.sm },
+  dutyChip: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.round,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card2,
+    marginRight: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  dutyChipActive: { backgroundColor: colors.cyanSoft, borderColor: colors.cyan },
+  dutyChipText: { color: colors.textDim, fontSize: fontSize.xs, fontWeight: '600' },
+  dutyChipTextActive: { color: colors.cyan },
+
+  // Etiqueta de solo lectura en la fila (el tipo de duty solo se cambia desde el modal).
+  dutyBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.round,
+    backgroundColor: colors.card2,
+    marginBottom: spacing.sm,
+  },
+  dutyBadgeText: { color: colors.textDim, fontSize: fontSize.xs, fontWeight: '600' },
+
   mark: {
     width: 36,
     height: 36,
@@ -64,7 +96,6 @@ export const styles = StyleSheet.create({
   rowTitle: { color: colors.text, fontSize: fontSize.md, fontWeight: '700' },
   rowHint: { color: colors.textFaint, fontSize: fontSize.xs, marginTop: 2 },
   rowDetail: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: '600' },
-  more: { color: colors.textFaint, fontSize: fontSize.sm, textAlign: 'center', padding: spacing.md },
 
   // ---------- Barra de abajo ----------
   bottomBar: {
@@ -86,6 +117,108 @@ export const styles = StyleSheet.create({
     borderColor: colors.cyan,
   },
   primaryButtonText: { color: colors.onAccent, fontSize: fontSize.lg, fontWeight: 'bold' },
+  primaryButtonDisabled: { backgroundColor: colors.card2, borderColor: colors.border },
   buttonIcon: { marginRight: spacing.sm },
   changeFile: { color: colors.cyan, fontSize: fontSize.md, fontWeight: 'bold', textAlign: 'center', padding: spacing.xs },
+  dangerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.redSoft,
+    borderColor: colors.red,
+  },
+  dangerButtonText: { color: colors.red, fontSize: fontSize.lg, fontWeight: 'bold' },
+
+  // ---------- Modal de edicion ----------
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalCard: {
+    maxHeight: '85%',
+    padding: spacing.lg,
+    backgroundColor: colors.panel,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  modalButtons: { marginTop: spacing.md },
+  saveError: {
+    color: colors.red,
+    fontSize: fontSize.sm,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: spacing.sm,
+  },
+  fieldRow: { flexDirection: 'row' },
+  halfLeft: { flex: 1, marginRight: spacing.md },
+  halfRight: { flex: 1 },
+  fieldBox: { marginBottom: spacing.md },
+  label: { color: colors.textDim, fontSize: fontSize.sm, fontWeight: 'bold', marginBottom: spacing.xs },
+  input: {
+    color: colors.text,
+    fontSize: fontSize.md,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  multilineInput: { minHeight: 80, textAlignVertical: 'top' },
+
+  // ---------- Dialogo de confirmar borrado ----------
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dialog: {
+    width: '85%',
+    padding: spacing.xl,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
+  },
+  dialogIcon: {
+    alignSelf: 'center',
+    width: 64,
+    height: 64,
+    borderRadius: radius.round,
+    backgroundColor: colors.redSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  dialogTitle: { color: colors.text, fontSize: fontSize.xl, fontWeight: '700' },
+  dialogText: { color: colors.textDim, fontSize: fontSize.md, marginTop: spacing.sm, marginBottom: spacing.lg },
+  dialogButtons: { flexDirection: 'row' },
+  cancelButton: {
+    flex: 1,
+    alignItems: 'center',
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    marginRight: spacing.sm,
+    backgroundColor: colors.card2,
+    borderColor: colors.border,
+  },
+  cancelButtonText: { color: colors.text, fontSize: fontSize.lg, fontWeight: 'bold' },
+  deleteButton: {
+    flex: 1,
+    alignItems: 'center',
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    backgroundColor: colors.redSoft,
+    borderColor: colors.red,
+  },
+  deleteButtonText: { color: colors.red, fontSize: fontSize.lg, fontWeight: 'bold' },
 });
