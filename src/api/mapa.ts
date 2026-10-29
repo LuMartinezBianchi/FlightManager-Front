@@ -1,8 +1,7 @@
 // Cliente HTTP del mapa de un vuelo. La app no conoce la base: pide los datos a la API.
 import type { Airport } from '@/components/flight-map';
 
-// En el celular no sirve localhost: poner la IP de la PC en EXPO_PUBLIC_API_URL
-export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+import { API_URL } from './config';
 
 const TIMEOUT_MS = 8000;
 
@@ -12,13 +11,15 @@ export type MapaVuelo = {
   destination: Airport;
 };
 
-export async function fetchMapaVuelo(number: string): Promise<MapaVuelo> {
+// fecha (YYYY-MM-DD) elige el vuelo exacto si el numero se repite en varios dias
+export async function fetchMapaVuelo(number: string, fecha?: string): Promise<MapaVuelo> {
   // Sin timeout, una conexión colgada deja la pantalla en "Cargando" para siempre
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const query = fecha ? `?fecha=${encodeURIComponent(fecha)}` : '';
 
   try {
-    const response = await fetch(`${API_URL}/api/vuelos/${encodeURIComponent(number)}/mapa`, {
+    const response = await fetch(`${API_URL}/api/vuelos/${encodeURIComponent(number)}/mapa${query}`, {
       signal: controller.signal,
     });
     if (!response.ok) {

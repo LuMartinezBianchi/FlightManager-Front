@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 
+import { createProgramacion, toIsoDate } from '@/api/programacion';
 import { colors } from '@/constants/theme';
 import { type DutyType, type ParsedDuty } from '@/data/flights';
 import { useFlightImport } from '@/hooks/useFlightImport';
@@ -46,6 +47,8 @@ export default function ImportPreviewScreen() {
   const [dutyType, setDutyType] = useState<DutyType>('vuelo');
   const [deleting, setDeleting] = useState<ParsedDuty | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
 
   useEffect(() => {
     // Sincroniza el resultado async del parseo (useFlightImport) con el
@@ -70,6 +73,38 @@ export default function ImportPreviewScreen() {
   }, [grouped]);
 
   const canImport = grouped.validFlights.length > 0 && grouped.errorRows.length === 0;
+
+  // Guarda todas las filas validas juntas: si una falla (ej. vuelo repetido), la API no guarda ninguna
+  async function importar() {
+    setImporting(true);
+    setImportError(null);
+    try {
+      await createProgramacion(
+        grouped.validFlights.flatMap((duty) =>
+          duty.flight
+            ? [
+                {
+                  number: duty.flight.number,
+                  date: toIsoDate(duty.date),
+                  from: duty.flight.from,
+                  to: duty.flight.to,
+                  dep: duty.flight.dep,
+                  arr: duty.flight.arr,
+                  duration: duty.flight.duration,
+                  aircraft: duty.flight.aircraft,
+                  crew: duty.flight.crew,
+                  source: 'parser' as const,
+                },
+              ]
+            : [],
+        ),
+      );
+      router.push('/import-success');
+    } catch (error) {
+      setImportError((error as Error).message);
+      setImporting(false);
+    }
+  }
 
   function openEdit(duty: ParsedDuty) {
     setEditing(duty);
@@ -232,13 +267,14 @@ export default function ImportPreviewScreen() {
       />
 
       <View style={styles.bottomBar}>
+        {importError && <Text style={{ color: colors.red, marginBottom: 8 }}>{importError}</Text>}
         <Pressable
-          style={[styles.primaryButton, !canImport && styles.primaryButtonDisabled]}
-          disabled={!canImport}
-          onPress={() => router.push('/import-success')}
+          style={[styles.primaryButton, (!canImport || importing) && styles.primaryButtonDisabled]}
+          disabled={!canImport || importing}
+          onPress={importar}
         >
           <Ionicons name="cloud-upload-outline" size={20} style={styles.buttonIcon} />
-          <Text style={styles.primaryButtonText}>Importar vuelos</Text>
+          <Text style={styles.primaryButtonText}>{importing ? 'Importando…' : 'Importar vuelos'}</Text>
         </Pressable>
         <Pressable onPress={() => router.back()}>
           <Text style={styles.changeFile}>Cambiar archivo</Text>

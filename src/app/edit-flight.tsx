@@ -1,97 +1,192 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { fetchAeropuertos } from '@/api/aeropuertos';
+import { deleteProgramacion, updateProgramacion, type Vuelo } from '@/api/programacion';
 import { colors } from '@/constants/theme';
+import { useProgramacion } from '@/hooks/use-programacion';
 import { styles } from '@/styles/edit-flight-styles';
+import { type FormularioVuelo, validarVueloManual } from '@/utils/validar-vuelo-manual';
 
-// Editar los datos de un vuelo. El boton rojo abre un dialogo para confirmar la eliminacion.
+const alerta = { backgroundColor: colors.redSoft, borderRadius: 8, padding: 10, marginBottom: 8 };
+
+// "2026-08-24" -> "24/08/2026", el formato que pide el formulario
+function aFechaFormulario(iso: string) {
+  const [anio, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${anio}`;
+}
+
+// Editar los datos de un vuelo. Recibe numero y fecha por parametro desde Modificar vuelos.
 export default function EditFlightScreen() {
-  const [number, setNumber] = useState('AR1204');
-  const [date, setDate] = useState('24/08/2026');
-  const [from, setFrom] = useState('EZE');
-  const [to, setTo] = useState('COR');
-  const [dep, setDep] = useState('07:15');
-  const [arr, setArr] = useState('09:05');
-  const [aircraft, setAircraft] = useState('Boeing 737-800');
-  const [confirming, setConfirming] = useState(false);
+  const { number, date } = useLocalSearchParams<{ number?: string; date?: string }>();
+  const { vuelos, loading } = useProgramacion();
+  const vuelo = vuelos.find((v) => v.number === number && v.date === date);
 
-  function deleteFlight() {
-    setConfirming(false);
-    router.back();
+  if (!vuelo) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.label}>{loading ? 'Cargando vuelo…' : 'No se encontró el vuelo'}</Text>
+      </View>
+    );
+  }
+
+  // El formulario se arma una vez con los datos del vuelo; cambiar la clave reinicia el formulario
+  return <EditForm key={`${vuelo.number}-${vuelo.date}`} vuelo={vuelo} />;
+}
+
+function EditForm({ vuelo }: { vuelo: Vuelo }) {
+  const [form, setForm] = useState<FormularioVuelo>({
+    number: vuelo.number,
+    date: aFechaFormulario(vuelo.date),
+    from: vuelo.from,
+    to: vuelo.to,
+    dep: vuelo.dep,
+    arr: vuelo.arr,
+    aircraft: vuelo.aircraft ?? '',
+    crew: vuelo.crew ?? '',
+  });
+  const [errores, setErrores] = useState<Record<string, string>>({});
+  const [iatasCargados, setIatasCargados] = useState<Set<string> | null>(null);
+  const [errorCatalogo, setErrorCatalogo] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [errorGuardado, setErrorGuardado] = useState<string | null>(null);
+  const [confirmando, setConfirmando] = useState(false);
+
+  useEffect(() => {
+    fetchAeropuertos()
+      .then((aeropuertos) => setIatasCargados(new Set(aeropuertos.map((a) => a.iata))))
+      .catch((error: Error) => setErrorCatalogo(error.message));
+  }, []);
+
+  function cambiar(campo: keyof FormularioVuelo, valor: string) {
+    setForm((actual) => ({ ...actual, [campo]: valor }));
+    setErrores((actuales) => {
+      const { [campo]: _resuelto, ...resto } = actuales;
+      return resto;
+    });
+  }
+
+  async function guardar() {
+    const encontrados = validarVueloManual(form, iatasCargados);
+    setErrores(encontrados);
+    if (Object.keys(encontrados).length > 0) return;
+    if (!iatasCargados) {
+      setErrorGuardado('No se pudo validar los aeropuertos: revisá la conexión con la API');
+      return;
+    }
+
+    setGuardando(true);
+    setErrorGuardado(null);
+    try {
+      const [anio, mes, dia] = [form.date.slice(6, 10), form.date.slice(3, 5), form.date.slice(0, 2)];
+      await updateProgramacion(
+        { number: vuelo.number, date: vuelo.date },
+        {
+          number: form.number.trim().toUpperCase(),
+          date: `${anio}-${mes}-${dia}`,
+          from: form.from.trim().toUpperCase(),
+          to: form.to.trim().toUpperCase(),
+          dep: form.dep.trim(),
+          arr: form.arr.trim(),
+          aircraft: form.aircraft.trim(),
+          crew: form.crew.trim(),
+          source: vuelo.source,
+        },
+      );
+      router.back();
+    } catch (error) {
+      setErrorGuardado((error as Error).message);
+      setGuardando(false);
+    }
+  }
+
+  async function eliminar() {
+    setConfirmando(false);
+    try {
+      await deleteProgramacion({ number: vuelo.number, date: vuelo.date });
+      router.back();
+    } catch (error) {
+      setErrorGuardado((error as Error).message);
+    }
+  }
+
+  // Campo con su mensaje de error debajo
+  function campo(clave: keyof FormularioVuelo, etiqueta: string, mitad?: 'izquierda' | 'derecha', multilinea = false) {
+    return (
+      <View style={[styles.fieldBox, mitad === 'izquierda' && styles.halfLeft, mitad === 'derecha' && styles.halfRight]}>
+        <Text style={styles.label}>{etiqueta}</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(texto) => cambiar(clave, texto)}
+          value={form[clave]}
+          multiline={multilinea}
+          autoCapitalize={clave === 'number' || clave === 'from' || clave === 'to' ? 'characters' : 'sentences'}
+        />
+        {errores[clave] && <Text style={{ color: colors.red, fontSize: 12, marginTop: 4 }}>{errores[clave]}</Text>}
+      </View>
+    );
   }
 
   return (
     <View style={styles.screen}>
       <View style={styles.form}>
-        <View style={styles.row}>
-          <View style={[styles.fieldBox, styles.halfLeft]}>
-            <Text style={styles.label}>N.º de vuelo</Text>
-            <TextInput style={styles.input} onChangeText={setNumber} value={number} />
+        {errorCatalogo && (
+          <View style={alerta}>
+            <Text style={{ color: colors.red }}>No se pudo cargar la lista de aeropuertos: {errorCatalogo}</Text>
           </View>
-          <View style={[styles.fieldBox, styles.halfRight]}>
-            <Text style={styles.label}>Fecha</Text>
-            <TextInput style={styles.input} onChangeText={setDate} value={date} />
-          </View>
-        </View>
+        )}
 
         <View style={styles.row}>
-          <View style={[styles.fieldBox, styles.halfLeft]}>
-            <Text style={styles.label}>Origen</Text>
-            <TextInput style={styles.input} onChangeText={setFrom} value={from} />
-          </View>
-          <View style={[styles.fieldBox, styles.halfRight]}>
-            <Text style={styles.label}>Destino</Text>
-            <TextInput style={styles.input} onChangeText={setTo} value={to} />
-          </View>
+          {campo('number', 'N.º de vuelo', 'izquierda')}
+          {campo('date', 'Fecha', 'derecha')}
         </View>
-
         <View style={styles.row}>
-          <View style={[styles.fieldBox, styles.halfLeft]}>
-            <Text style={styles.label}>Salida (hora local)</Text>
-            <TextInput style={styles.input} onChangeText={setDep} value={dep} />
-          </View>
-          <View style={[styles.fieldBox, styles.halfRight]}>
-            <Text style={styles.label}>Llegada (hora local)</Text>
-            <TextInput style={styles.input} onChangeText={setArr} value={arr} />
-          </View>
+          {campo('from', 'Origen', 'izquierda')}
+          {campo('to', 'Destino', 'derecha')}
         </View>
-
-        <View style={styles.fieldBox}>
-          <Text style={styles.label}>Avión</Text>
-          <TextInput style={styles.input} onChangeText={setAircraft} value={aircraft} />
+        <View style={styles.row}>
+          {campo('dep', 'Salida (hora local)', 'izquierda')}
+          {campo('arr', 'Llegada (hora local)', 'derecha')}
         </View>
+        {campo('aircraft', 'Avión (opcional)')}
+        {campo('crew', 'Tripulación (opcional)', undefined, true)}
       </View>
 
       <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
-        <Pressable style={styles.primaryButton} onPress={() => router.back()}>
+        {errorGuardado && (
+          <View style={alerta}>
+            <Text style={{ color: colors.red }}>{errorGuardado}</Text>
+          </View>
+        )}
+        <Pressable style={styles.primaryButton} onPress={guardar} disabled={guardando}>
           <Ionicons name="save-outline" size={20} color={colors.onAccent} style={styles.buttonIcon} />
-          <Text style={styles.primaryButtonText}>Guardar cambios</Text>
+          <Text style={styles.primaryButtonText}>{guardando ? 'Guardando…' : 'Guardar cambios'}</Text>
         </Pressable>
-        <Pressable style={styles.dangerButton} onPress={() => setConfirming(true)}>
+        <Pressable style={styles.dangerButton} onPress={() => setConfirmando(true)}>
           <Ionicons name="trash-outline" size={20} color={colors.red} style={styles.buttonIcon} />
           <Text style={styles.dangerButtonText}>Eliminar vuelo</Text>
         </Pressable>
       </SafeAreaView>
 
-      <Modal visible={confirming} animationType="fade" transparent onRequestClose={() => setConfirming(false)}>
+      <Modal visible={confirmando} animationType="fade" transparent onRequestClose={() => setConfirmando(false)}>
         <View style={styles.overlay}>
           <View style={styles.dialog}>
             <View style={styles.dialogIcon}>
               <Ionicons name="trash-outline" size={28} color={colors.red} />
             </View>
-            <Text style={styles.dialogTitle}>¿Eliminar vuelo {number}?</Text>
+            <Text style={styles.dialogTitle}>¿Eliminar vuelo {vuelo.number}?</Text>
             <Text style={styles.dialogText}>
-              Se quitará del calendario y de Vuelos programados. Esta acción no se puede deshacer.
+              Se quitará de Vuelos programados. Esta acción no se puede deshacer.
             </Text>
 
             <View style={styles.dialogButtons}>
-              <Pressable style={styles.cancelButton} onPress={() => setConfirming(false)}>
+              <Pressable style={styles.cancelButton} onPress={() => setConfirmando(false)}>
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </Pressable>
-              <Pressable style={styles.deleteButton} onPress={deleteFlight}>
+              <Pressable style={styles.deleteButton} onPress={eliminar}>
                 <Text style={styles.deleteButtonText}>Eliminar</Text>
               </Pressable>
             </View>

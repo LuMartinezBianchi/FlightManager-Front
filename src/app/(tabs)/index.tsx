@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, Tone, tones } from '@/constants/theme';
 import { calendarDays } from '@/data/calendar';
-import { sections } from '@/data/flights';
+import { useProgramacion } from '@/hooks/use-programacion';
 import { styles } from '@/styles/index-styles';
 
 // Datos hardcodeados por ahora.
@@ -15,8 +15,6 @@ const stats = [
   { value: '42:10', label: 'ESTE MES' },
   { value: '186', label: 'VUELOS / AÑO' },
 ];
-
-const flight = sections[0].data[0];
 
 // Calendario. Cada dia con vuelo, guardia o libre usa el color de su estado (los datos estan en data/calendar.ts).
 const months = [
@@ -40,6 +38,9 @@ const legend = [
 export default function HomeScreen() {
   const [month, setMonth] = useState(7); // 0 = enero
   const [year, setYear] = useState(2026);
+  const { vuelos } = useProgramacion();
+  // Próximo vuelo: el primero de la programación, o nada si todavía no hay vuelos cargados
+  const flight = vuelos[0];
 
   function changeMonth(step: number) {
     let newMonth = month + step;
@@ -121,9 +122,12 @@ export default function HomeScreen() {
             <Text style={styles.nextLabel}>PRÓXIMO VUELO</Text>
           </View>
 
+          {!flight && <Text style={styles.label}>No hay vuelos programados</Text>}
+
+          {flight && (
           <Pressable
             style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-            onPress={() => router.push('/flight')}
+            onPress={() => router.push({ pathname: '/flight', params: { number: flight.number, date: flight.date } })}
           >
             <View style={styles.row}>
               <Text style={styles.flightNumber}>Vuelo {flight.number}</Text>
@@ -149,6 +153,7 @@ export default function HomeScreen() {
 
             <Text style={styles.label}>{flight.aircraft}</Text>
           </Pressable>
+          )}
         </View>
 
         <Pressable style={styles.alert} onPress={() => router.push('/flight-log')}>

@@ -4,15 +4,17 @@ import { useState } from 'react';
 import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { sections } from '@/data/flights';
+import { agruparPorDia, useProgramacion, type DiaVuelos } from '@/hooks/use-programacion';
 import { styles } from '@/styles/edit-flights-styles';
 
 // Modificar vuelos: lista de vuelos programados, cada uno con su lapiz para editarlo.
 export default function EditFlightsScreen() {
   const [search, setSearch] = useState('');
+  const { vuelos } = useProgramacion();
+  const sections = agruparPorDia(vuelos);
 
   // Se queda con los vuelos que contienen lo buscado, y con los dias que tengan alguno
-  const filtered: typeof sections = [];
+  const filtered: DiaVuelos[] = [];
   for (const section of sections) {
     const data = section.data.filter((f) =>
       (f.number + f.from + f.to).toLowerCase().includes(search.toLowerCase()),
@@ -26,7 +28,7 @@ export default function EditFlightsScreen() {
     <View style={styles.screen}>
       <SectionList
         sections={filtered}
-        keyExtractor={(item) => item.number}
+        keyExtractor={(item) => `${item.number}-${item.date}`}
         style={styles.list}
         ListHeaderComponent={
           <View style={styles.searchBox}>
@@ -50,7 +52,10 @@ export default function EditFlightsScreen() {
               <Text style={styles.aircraft}>{item.aircraft}</Text>
             </View>
 
-            <Pressable style={styles.editButton} onPress={() => router.push('/edit-flight')}>
+            <Pressable
+              style={styles.editButton}
+              onPress={() => router.push({ pathname: '/edit-flight', params: { number: item.number, date: item.date } })}
+            >
               <Ionicons name="pencil" size={16} color={colors.cyan} />
             </Pressable>
           </View>
