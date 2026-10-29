@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
+import { FlatList, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { styles } from '@/styles/flight-styles';
@@ -21,14 +21,14 @@ const NOTAMS = [
 
 const WEATHER = [
   { id: 'eze', airport: 'EZE', temp: '19°C', wind: '12kt NW', vis: '10km', metar: 'SAEZ 241800Z 31012KT...', icon: 'partly-sunny' as const },
-  { id: 'cor', airport: 'COR', temp: '23°C', wind: '8kt SW',  vis: '9km',  metar: 'SACO 241800Z 22008KT...', icon: 'cloudy' as const },
+  { id: 'cor', airport: 'COR', temp: '23°C', wind: '8kt SW', vis: '9km', metar: 'SACO 241800Z 22008KT...', icon: 'cloudy' as const },
 ];
 
 const CREW = [
   { id: '1', name: 'Martín Fernández', role: 'Capitán' },
-  { id: '2', name: 'Laura Castillo',   role: 'Primer Oficial' },
-  { id: '3', name: 'Roberto Paz',      role: 'Tripulante de Cabina' },
-  { id: '4', name: 'Sofía García',     role: 'Tripulante de Cabina' },
+  { id: '2', name: 'Laura Castillo', role: 'Primer Oficial' },
+  { id: '3', name: 'Roberto Paz', role: 'Tripulante de Cabina' },
+  { id: '4', name: 'Sofía García', role: 'Tripulante de Cabina' },
 ];
 
 
@@ -115,7 +115,7 @@ export default function NextFlightScreen() {
             <Text style={styles.subtitle}>{FLIGHT.origin.name}</Text>
           </View>
           <View style={{ alignItems: 'center' }}>
-            <Ionicons name="airplane" style={styles.planeIcon}/>
+            <Ionicons name="airplane" style={styles.planeIcon} />
             <Text style={styles.subtitle}>{FLIGHT.duration}</Text>
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end' }}>
@@ -124,15 +124,24 @@ export default function NextFlightScreen() {
           </View>
         </View>
 
+        <Pressable
+          style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
+          onPress={() =>
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=Aeropuerto+Internacional+Ezeiza+EZE')
+          }
+        >
+          <Text style={styles.logbookBtnText}>Ver aeropuerto en mapa</Text>
+        </Pressable>
+
         <View>
           <SectionLabel title="Ruta en mapa" />
           <View style={styles.mapPlaceholder}>
-            <Text style={{color:'#ffffff'}}>Mapa de ruta</Text>
+            <Text style={{ color: '#ffffff' }}>Mapa de ruta</Text>
           </View>
         </View>
 
         <View>
-          <SectionLabel title="NOTAMs" summary ={`${NOTAMS.length} activos`} />
+          <SectionLabel title="NOTAMs" summary={`${NOTAMS.length} activos`} />
           <FlatList
             data={NOTAMS}
             keyExtractor={(item) => item.id}
@@ -160,7 +169,7 @@ export default function NextFlightScreen() {
           <Text style={styles.logbookBtnText}>Llenar libro de vuelo</Text>
         </Pressable>
 
-        <View  style={{marginBottom:15}}>
+        <View style={{ marginBottom: 15 }}>
           <SectionLabel title="Tripulación" summary={`${CREW.length} integrantes`} />
           <View style={[styles.card, { overflow: 'hidden' }]}>
             <FlatList
@@ -173,7 +182,7 @@ export default function NextFlightScreen() {
             />
           </View>
         </View>
-        
+
       </ScrollView>
     </SafeAreaView>
   );
