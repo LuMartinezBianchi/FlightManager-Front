@@ -1,8 +1,11 @@
+import { FlightMap } from '@/components/flight-map';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { FlatList, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { API_URL, fetchMapaVuelo, type MapaVuelo } from '@/api/mapa';
 import { styles } from '@/styles/flight-styles';
 
 const FLIGHT = {
@@ -90,6 +93,15 @@ function CrewItem({ item, isLast }: { item: (typeof CREW)[0]; isLast: boolean })
 
 export default function NextFlightScreen() {
   const router = useRouter();
+  const [mapa, setMapa] = useState<MapaVuelo | null>(null);
+  const [mapaError, setMapaError] = useState<string | null>(null);
+
+  // El mapa (aeropuertos y ruta) viene de la API, no del front
+  useEffect(() => {
+    fetchMapaVuelo(FLIGHT.code)
+      .then(setMapa)
+      .catch((error: Error) => setMapaError(error.message));
+  }, []);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -124,20 +136,30 @@ export default function NextFlightScreen() {
           </View>
         </View>
 
-        <Pressable
-          style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
-          onPress={() =>
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=Aeropuerto+Internacional+Ezeiza+EZE')
-          }
-        >
-          <Text style={styles.logbookBtnText}>Ver aeropuerto en mapa</Text>
-        </Pressable>
+        {mapa && (
+          <Pressable
+            style={({ pressed }) => [styles.logbookBtn, pressed && { opacity: 0.8 }]}
+            onPress={() =>
+              Linking.openURL(
+                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapa.origin.name)}`
+              )
+            }
+          >
+            <Text style={styles.logbookBtnText}>Ver aeropuerto en mapa</Text>
+          </Pressable>
+        )}
 
-        <View>
+        {/*<View>
           <SectionLabel title="Ruta en mapa" />
           <View style={styles.mapPlaceholder}>
             <Text style={{ color: '#ffffff' }}>Mapa de ruta</Text>
           </View>
+        </View> */}
+
+        <View>
+          <SectionLabel title="Ruta en mapa" />
+          {mapa && <FlightMap origin={mapa.origin} destination={mapa.destination} />}
+          {!mapa && <Text style={styles.subtitle}>{mapaError ?? `Cargando mapa desde ${API_URL}…`}</Text>}
         </View>
 
         <View>
