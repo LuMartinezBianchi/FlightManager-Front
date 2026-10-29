@@ -15,6 +15,7 @@ export default function AddFlightManualScreen() {
   const [dep, setDep] = useState('');
   const [arr, setArr] = useState('');
   const [aircraft, setAircraft] = useState('');
+  const [crew, setCrew] = useState('');
 
   return (
     <View style={styles.screen}>
@@ -89,6 +90,17 @@ export default function AddFlightManualScreen() {
             onChangeText={setAircraft}
             value={aircraft}
             placeholder="Ej: Boeing 737-800"
+          />
+        </View>
+
+        <View style={styles.fieldBox}>
+          <Text style={styles.label}>Tripulación</Text>
+          <TextInput
+            style={[styles.input, styles.multilineInput]}
+            onChangeText={setCrew}
+            value={crew}
+            placeholder="Un nombre por línea"
+            multiline
           />
         </View>
       </View>
