@@ -11,7 +11,7 @@ import { styles } from '@/styles/flights-styles';
 // Pantalla 2: Vuelos programados. Desde aca se agregan y se modifican vuelos.
 export default function FlightsScreen() {
   const { vuelos, loading, error } = useVuelos();
-  // Solo los vuelos que todavia no pasaron; los anteriores se buscan desde "Modificar vuelos"
+  // Solo los vuelos que todavia no pasaron
   const proximos = useMemo(() => vuelosFuturos(vuelos), [vuelos]);
   const sections = useMemo(() => agruparPorDia(proximos), [proximos]);
 

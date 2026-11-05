@@ -12,11 +12,11 @@ export default function EditFlightsScreen() {
   const [search, setSearch] = useState('');
   const { vuelos } = useVuelos();
 
-  // Sin busqueda solo se ven los vuelos futuros; al buscar (por numero, ruta o dia) aparecen tambien los anteriores
-  const filtered: DiaVuelos[] = useMemo(() => {
-    const candidatos = search.trim() ? vuelos : vuelosFuturos(vuelos);
-    return agruparPorDia(candidatos.filter((v) => coincideBusqueda(v, search)));
-  }, [vuelos, search]);
+  // Solo los vuelos que todavia no pasaron; la busqueda (por numero, ruta o dia) filtra entre ellos
+  const filtered: DiaVuelos[] = useMemo(
+    () => agruparPorDia(vuelosFuturos(vuelos).filter((v) => coincideBusqueda(v, search))),
+    [vuelos, search],
+  );
 
   return (
     <View style={styles.screen}>

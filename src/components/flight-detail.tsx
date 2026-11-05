@@ -13,11 +13,6 @@ import { useMeteo, type MeteoAeropuerto } from '@/hooks/use-meteo';
 import { proximoVuelo, tituloDia, useVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/flight-styles';
 
-// Los NOTAMs todavia son de ejemplo: no vienen de la programacion. El clima viene de la API (METAR de NOAA)
-const NOTAMS = [
-  { id: '1', airport: 'EZE', label: '⚠ Precaución', text: 'Pista 11/29 cerrada parcial\n02:00–05:00 UTC.' },
-  { id: '2', airport: 'COR', label: '⚠ Precaución', text: 'Grúa a 340m de THR 18,\naltura 45m.' },
-];
 
 const PUNTOS_CARDINALES = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
@@ -56,19 +51,7 @@ function SectionLabel({ title, summary }: { title: string; summary?: string }) {
   );
 }
 
-function NotamItem({ item }: { item: (typeof NOTAMS)[0] }) {
-  return (
-    <View style={[styles.card, styles.pairItem]}>
-      <View style={styles.slides}>
-        <Text style={styles.airportName}>{item.airport}</Text>
-        <View style={styles.statusTAG_caution}>
-          <Text style={styles.statusTAGText_caution}>{item.label}</Text>
-        </View>
-      </View>
-      <Text style={styles.subtitle}>{item.text}</Text>
-    </View>
-  );
-}
+
 
 function WeatherItem({ item }: { item: MeteoAeropuerto }) {
   const { meteo } = item;
@@ -107,25 +90,32 @@ function CrewItem({ name, isLast }: { name: string; isLast: boolean }) {
   );
 }
 
-// Detalle de un vuelo de la programacion. Con proximo muestra siempre el proximo vuelo;
-// si no, el que corresponde a numero + fecha.
+// -----------------------------------------------------------------------------
+// MODULO PRINCIPAL FlightDetail
+// -----------------------------------------------------------------------------
+
+
 export function FlightDetail({ number, date, proximo }: { number?: string; date?: string; proximo?: boolean }) {
   const router = useRouter();
   // La pestaña "Próx. vuelo" no tiene header y necesita el margen de arriba (notch);
   // el detalle abierto desde la lista ya lo tiene dentro del header del Stack, y si no se duplica.
   const bordes = proximo ? (['top'] as const) : [];
+
   const { vuelos, loading, error } = useVuelos();
   const vuelo = proximo ? proximoVuelo(vuelos) : vuelos.find((v) => v.number === number && v.date === date);
+  
   const meteo = useMeteo([vuelo?.from, vuelo?.to]);
 
   const [mapa, setMapa] = useState<MapaVuelo | null>(null);
   const [mapaError, setMapaError] = useState<string | null>(null);
 
-  // El mapa (aeropuertos y ruta) viene de la API, no del front
+  
   const numeroVuelo = vuelo?.number;
   const fechaVuelo = vuelo?.date;
+  
   useEffect(() => {
     if (!numeroVuelo || !fechaVuelo) return;
+
     fetchMapaVuelo(numeroVuelo, fechaVuelo)
       .then(setMapa)
       .catch((error: Error) => setMapaError(error.message));
@@ -195,17 +185,6 @@ export function FlightDetail({ number, date, proximo }: { number?: string; date?
             <Text style={styles.logbookBtnText}>Como llegar al aeropuerto de origen</Text>
           </Pressable>
         )}
-
-        <View>
-          <SectionLabel title="NOTAMs" summary={`${NOTAMS.length} activos`} />
-          <FlatList
-            data={NOTAMS}
-            keyExtractor={(item) => item.id}
-            horizontal
-            contentContainerStyle={styles.pairList}
-            renderItem={({ item }) => <NotamItem item={item} />}
-          />
-        </View>
 
         <View>
           <SectionLabel

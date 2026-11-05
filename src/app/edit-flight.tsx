@@ -45,6 +45,7 @@ function EditForm({ vuelo }: { vuelo: Vuelo }) {
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [iatasCargados, setIatasCargados] = useState<Set<string> | null>(null);
   const [errorCatalogo, setErrorCatalogo] = useState<string | null>(null);
+  
   const [guardando, setGuardando] = useState(false);
   const [errorGuardado, setErrorGuardado] = useState<string | null>(null);
   const [confirmando, setConfirmando] = useState(false);

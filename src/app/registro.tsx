@@ -20,6 +20,11 @@ export default function RegistroScreen() {
       setError('Completá el email y la contraseña');
       return;
     }
+    // Misma regla que usa el back en POST /api/registro: algo@dominio.ext, sin espacios
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('El email no es válido (ej: piloto@mail.com)');
+      return;
+    }
     if (password.length < 8) {
       setError('La contraseña tiene que tener al menos 8 caracteres');
       return;
