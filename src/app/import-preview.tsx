@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { File } from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -18,9 +19,8 @@ import { createProgramacion } from '@/api/programacion';
 import { createVuelos, toIsoDate } from '@/api/vuelos';
 import { colors } from '@/constants/theme';
 import { type DutyType, type ParsedDuty } from '@/data/flights';
-import { useFlightImport } from '@/hooks/useFlightImport';
 import { styles } from '@/styles/import-preview-styles';
-import { buildParsedDuty } from '@/utils/parse-flights';
+import { buildParsedDuty, parseFlights } from '@/utils/parse-flights';
 
 const DUTY_TYPES: DutyType[] = ['vuelo', 'deadhead', 'reserva', 'franco', 'sin_asignar'];
 
@@ -38,10 +38,12 @@ const EMPTY_FORM: EditForm = { number: '', date: '', from: '', to: '', dep: '', 
 
 // Agregar vuelos desde .xlsx, paso 2: revisar lo que se detecto en el archivo.
 export default function ImportPreviewScreen() {
-  const { uri, name } = useLocalSearchParams<{ uri?: string; name?: string }>();
-  const { loading, duties, globalError } = useFlightImport(uri);
+  const { uri, name } = useLocalSearchParams<{ uri: string; name?: string }>();
 
+  // Filas del archivo (se pueden editar y borrar antes de importar) y estado de la lectura.
   const [flights, setFlights] = useState<ParsedDuty[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const [editing, setEditing] = useState<ParsedDuty | null>(null);
   const [form, setForm] = useState<EditForm>(EMPTY_FORM);
@@ -51,12 +53,23 @@ export default function ImportPreviewScreen() {
   const [importing, setImporting] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
 
+  // Al abrir la pantalla: lee el archivo elegido (uri), lo parsea y guarda las filas en flights.
   useEffect(() => {
-    // Sincroniza el resultado async del parseo (useFlightImport) con el
-    // estado editable de la pantalla; es la unica fuente de verdad de ahi en mas.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (duties) setFlights(duties);
-  }, [duties]);
+    async function cargarArchivo() {
+      try {
+        const base64 = await new File(uri).base64();
+        const result = parseFlights(base64);
+
+        if ('globalError' in result) setGlobalError(result.globalError);
+        else setFlights(result.duties);
+      } catch {
+        setGlobalError('No se pudo leer el archivo. Probá con otro.');
+      }
+      setLoading(false);
+    }
+
+    cargarArchivo();
+  }, [uri]);
 
   const grouped = useMemo(() => {
     const errorRows = flights.filter((duty) => duty.error);
@@ -81,11 +94,14 @@ export default function ImportPreviewScreen() {
     setImporting(true);
     setImportError(null);
     try {
+      // dias sin vuelo
       await createProgramacion(
         flights
           .filter((duty) => !duty.error && duty.dutyType !== 'vuelo')
           .map((duty) => ({ date: toIsoDate(duty.date), type: duty.dutyType })),
       );
+
+      // dias con vuelo
       await createVuelos(
         grouped.validFlights.flatMap((duty) =>
           duty.flight

@@ -2,9 +2,6 @@ import { read, utils } from 'xlsx';
 
 import { type DutyType, type Flight, type ParsedDuty } from '@/data/flights';
 
-// Parseo puro de un archivo .xlsx de programacion de vuelos o de un roster de
-// tripulacion. No depende de React ni de nada de la UI.
-
 type CellValue = string | number | Date | undefined;
 
 type ColumnRole =
@@ -19,9 +16,7 @@ type ColumnRole =
   | 'crew'
   | 'dutyType';
 
-// Encabezados reconocidos, ya normalizados (ver normalizeHeader). Cubre la
-// plantilla simple (N.o de vuelo, origen, destino, salida, llegada, avion) y
-// el roster real (Vuelo, Ruta combinada, Inicio/Fin local).
+
 const HEADER_ALIASES: Record<ColumnRole, string[]> = {
   number: ['n de vuelo', 'no de vuelo', 'nro de vuelo', 'nro vuelo', 'numero de vuelo', 'numero vuelo', 'vuelo', 'flight', 'flight number'],
   date: ['fecha', 'fecha de duty local', 'fecha de duty', 'date'],
@@ -78,13 +73,26 @@ export function normalizeHeader(header: string): string {
     .trim();
 }
 
-function matchColumnRoles(headerRow: CellValue[]): Partial<Record<ColumnRole, number>> {
-  const roles: Partial<Record<ColumnRole, number>> = {};
+// Devuelve en que columna esta cada dato. -1 significa que el archivo no tiene esa columna.
+function matchColumnRoles(headerRow: CellValue[]): Record<ColumnRole, number> {
+  const roles: Record<ColumnRole, number> = {
+    number: -1,
+    date: -1,
+    route: -1,
+    origin: -1,
+    destination: -1,
+    departure: -1,
+    arrival: -1,
+    aircraft: -1,
+    crew: -1,
+    dutyType: -1,
+  };
+
   headerRow.forEach((cell, index) => {
     if (typeof cell !== 'string') return;
     const normalized = normalizeHeader(cell);
     (Object.keys(HEADER_ALIASES) as ColumnRole[]).forEach((role) => {
-      if (roles[role] !== undefined) return;
+      if (roles[role] !== -1) return;
       if (HEADER_ALIASES[role].includes(normalized)) {
         roles[role] = index;
       }
@@ -294,30 +302,45 @@ export function parseFlights(base64: string): ParseFlightsResult {
   if (rows.length === 0) return { duties: [] };
 
   const roles = matchColumnRoles(rows[0]);
-  if (roles.date === undefined) {
-    return { globalError: 'No se encontró la columna de fecha en el archivo.' };
+  // El archivo tiene que traer todas las columnas; si falta alguna, no se carga nada.
+  // La ruta puede venir como una columna "ruta" o como dos columnas "origen" y "destino": alcanza con una de las dos formas.
+  const tieneRuta = roles.route !== -1;
+  const tieneOrigenDestino = roles.origin !== -1 && roles.destination !== -1;
+  const faltantes = (Object.keys(HEADER_ALIASES) as ColumnRole[]).filter((role) => {
+    if (role === 'route' || role === 'origin' || role === 'destination') return false;
+    return roles[role] === -1;
+  });
+  if (!tieneRuta && !tieneOrigenDestino) faltantes.push('route');
+  if (faltantes.length > 0) {
+    const nombres = faltantes.map((role) => HEADER_ALIASES[role][0]).join(', ');
+    return { globalError: `Faltan columnas en el archivo: ${nombres}.` };
   }
 
   const duties: ParsedDuty[] = [];
 
   rows.slice(1).forEach((row, index) => {
-    const cell = (role: ColumnRole): CellValue => {
-      const columnIndex = roles[role];
-      return columnIndex === undefined ? undefined : row[columnIndex];
-    };
+    const cell = (role: ColumnRole): CellValue => row[roles[role]];
 
     const dateText = extractDateFromCell(cell('date'));
+    
     const routeRaw = cell('route');
     const route = typeof routeRaw === 'string' ? splitRoute(routeRaw) : null;
     const originText = route ? route.origin : stringValue(cell('origin'));
     const destinationText = route ? route.destination : stringValue(cell('destination'));
+
     const numberText = stringValue(cell('number'));
+
     const departureText = extractTimeFromCell(cell('departure'));
+    
     const arrivalText = extractTimeFromCell(cell('arrival'));
+    
     const aircraftText = stringValue(cell('aircraft'));
+    
     const crewText = stringValue(cell('crew'));
+    
     const dutyTypeRaw = stringValue(cell('dutyType'));
-    const dutyType = roles.dutyType === undefined ? 'vuelo' : mapDutyType(dutyTypeRaw);
+    
+    const dutyType = mapDutyType(dutyTypeRaw);
 
     const isEmptyRow =
       !dateText &&

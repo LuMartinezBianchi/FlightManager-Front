@@ -37,7 +37,6 @@ export default function AddFlightManualScreen() {
   const [guardando, setGuardando] = useState(false);
   const [errorGuardado, setErrorGuardado] = useState<string | null>(null);
 
-  // Los aeropuertos se validan contra la base: se cargan una vez al abrir la pantalla
   useEffect(() => {
     fetchAeropuertos()
       .then((aeropuertos) => setIatasCargados(new Set(aeropuertos.map((a) => a.iata))))

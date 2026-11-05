@@ -7,7 +7,7 @@ import { Pressable, Text, View } from 'react-native';
 import { colors } from '@/constants/theme';
 import { styles } from '@/styles/add-flights-styles';
 
-// Agregar vuelos desde .xlsx, paso 1: elegir el archivo.
+
 export default function AddFlightsScreen() {
   const [pickError, setPickError] = useState<string | null>(null);
 
@@ -44,15 +44,6 @@ export default function AddFlightsScreen() {
           <Text style={styles.chooseButtonText}>Elegir archivo .xlsx</Text>
         </Pressable>
         {pickError && <Text style={styles.pickError}>{pickError}</Text>}
-      </View>
-
-      <View style={styles.template}>
-        <View style={styles.templateText}>
-          <Text style={styles.templateTitle}>Plantilla de vuelos</Text>
-          <Text style={styles.templateColumns}>
-            Columnas: N.º de vuelo, fecha, origen, destino, salida, llegada y avión
-          </Text>
-        </View>
       </View>
 
       <View style={styles.divider}>
