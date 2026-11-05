@@ -16,14 +16,18 @@ export const colors = {
 
   // Acentos de estado
   cyan: '#3FC7F4', // vuelo
-  amber: '#F3A73E', // guardia
-  green: '#3ED598', // libre
+  amber: '#F3A73E', // reserva (guardia)
+  green: '#3ED598', // franco (libre)
+  violet: '#A78BFA', // deadhead
+  gray: '#8A94AE', // sin asignar
   red: '#F26D6F', // alerta
 
   // Fondos suaves para chips e iconos (15% de opacidad)
   cyanSoft: 'rgba(63, 199, 244, 0.15)',
   amberSoft: 'rgba(243, 167, 62, 0.15)',
   greenSoft: 'rgba(62, 213, 152, 0.15)',
+  violetSoft: 'rgba(167, 139, 250, 0.15)',
+  graySoft: 'rgba(138, 148, 174, 0.15)',
   redSoft: 'rgba(242, 109, 111, 0.15)',
 
   // Texto sobre un fondo de acento (ej: boton cyan)
@@ -37,12 +41,14 @@ export const radius = { sm: 8, md: 12, lg: 16, xl: 20, round: 999 };
 export const fontSize = { xs: 10, sm: 12, md: 14, lg: 16, xl: 20, xxl: 26 };
 
 // Tonos de estado, para componentes que cambian de color según el caso (Chip, NOTAM, etc.)
-export type Tone = 'cyan' | 'amber' | 'green' | 'red';
+export type Tone = 'cyan' | 'amber' | 'green' | 'violet' | 'gray' | 'red';
 
 export const tones: { [key in Tone]: { color: string; soft: string } } = {
   cyan: { color: colors.cyan, soft: colors.cyanSoft },
   amber: { color: colors.amber, soft: colors.amberSoft },
   green: { color: colors.green, soft: colors.greenSoft },
+  violet: { color: colors.violet, soft: colors.violetSoft },
+  gray: { color: colors.gray, soft: colors.graySoft },
   red: { color: colors.red, soft: colors.redSoft },
 };
 

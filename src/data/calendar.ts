@@ -1,138 +1,20 @@
-export type DayStatus = 'vuelo' | 'guardia' | 'libre';
+import { type DiaProgramacion } from '@/api/programacion';
+import { type Vuelo } from '@/api/vuelos';
+import { type DutyType } from '@/data/flights';
 
-// Estado de cada dia del calendario. La clave de cada mes es "año-mes" (ej: "2026-8" es agosto de 2026).
-// Los meses que no estan aca se muestran sin marcar.
-// Datos hardcodeados por ahora.
-export const calendarDays: { [month: string]: { [day: number]: DayStatus } } = {
-  '2026-7': {
-    1: 'vuelo',
-    2: 'vuelo',
-    3: 'libre',
-    4: 'libre',
-    5: 'libre',
-    6: 'vuelo',
-    7: 'vuelo',
-    8: 'vuelo',
-    9: 'libre',
-    10: 'libre',
-    11: 'guardia',
-    12: 'guardia',
-    13: 'vuelo',
-    14: 'vuelo',
-    15: 'libre',
-    16: 'libre',
-    17: 'libre',
-    18: 'guardia',
-    19: 'guardia',
-    20: 'vuelo',
-    21: 'vuelo',
-    22: 'vuelo',
-    23: 'libre',
-    24: 'libre',
-    25: 'guardia',
-    26: 'guardia',
-    27: 'vuelo',
-    28: 'vuelo',
-    29: 'libre',
-    30: 'libre',
-    31: 'libre',
-  },
-  '2026-8': {
-    1: 'libre',
-    2: 'libre',
-    3: 'vuelo',
-    4: 'vuelo',
-    5: 'vuelo',
-    6: 'libre',
-    7: 'libre',
-    8: 'guardia',
-    9: 'guardia',
-    10: 'vuelo',
-    11: 'vuelo',
-    12: 'libre',
-    13: 'libre',
-    14: 'libre',
-    15: 'guardia',
-    16: 'guardia',
-    17: 'vuelo',
-    18: 'vuelo',
-    19: 'vuelo',
-    20: 'libre',
-    21: 'libre',
-    22: 'libre',
-    23: 'guardia',
-    24: 'vuelo',
-    25: 'libre',
-    26: 'vuelo',
-    27: 'guardia',
-    28: 'libre',
-    29: 'libre',
-    30: 'libre',
-    31: 'vuelo',
-  },
-  '2026-9': {
-    1: 'vuelo',
-    2: 'vuelo',
-    3: 'libre',
-    4: 'libre',
-    5: 'libre',
-    6: 'libre',
-    7: 'vuelo',
-    8: 'vuelo',
-    9: 'vuelo',
-    10: 'libre',
-    11: 'libre',
-    12: 'guardia',
-    13: 'guardia',
-    14: 'vuelo',
-    15: 'vuelo',
-    16: 'libre',
-    17: 'libre',
-    18: 'libre',
-    19: 'guardia',
-    20: 'guardia',
-    21: 'vuelo',
-    22: 'vuelo',
-    23: 'vuelo',
-    24: 'libre',
-    25: 'libre',
-    26: 'libre',
-    27: 'guardia',
-    28: 'vuelo',
-    29: 'vuelo',
-    30: 'libre',
-  },
-  '2026-10': {
-    1: 'vuelo',
-    2: 'libre',
-    3: 'libre',
-    4: 'libre',
-    5: 'vuelo',
-    6: 'vuelo',
-    7: 'libre',
-    8: 'libre',
-    9: 'guardia',
-    10: 'guardia',
-    11: 'guardia',
-    12: 'vuelo',
-    13: 'vuelo',
-    14: 'vuelo',
-    15: 'libre',
-    16: 'libre',
-    17: 'libre',
-    18: 'guardia',
-    19: 'vuelo',
-    20: 'vuelo',
-    21: 'libre',
-    22: 'libre',
-    23: 'guardia',
-    24: 'guardia',
-    25: 'guardia',
-    26: 'vuelo',
-    27: 'vuelo',
-    28: 'vuelo',
-    29: 'libre',
-    30: 'libre',
-    31: 'libre',
-  },
-};
+// Estado de un día del calendario: es el mismo tipo de actividad que se lee al importar el .xlsx
+export type DayStatus = DutyType;
+
+// Estado de cada día con datos cargados, por fecha (YYYY-MM-DD). Los días que no están acá se muestran sin marcar.
+// Un día con vuelos cargados es 'vuelo' (o 'deadhead' si así figura en la programación);
+// el resto sale del tipo guardado para ese día (reserva, franco, sin asignar).
+export function buildCalendar(vuelos: Vuelo[], dias: DiaProgramacion[]): { [date: string]: DayStatus } {
+  const marks: { [date: string]: DayStatus } = {};
+  for (const dia of dias) {
+    marks[dia.date] = dia.type;
+  }
+  for (const vuelo of vuelos) {
+    marks[vuelo.date] = marks[vuelo.date] === 'deadhead' ? 'deadhead' : 'vuelo';
+  }
+  return marks;
+}

@@ -51,6 +51,7 @@ export const styles = StyleSheet.create({
   dayText: { color: colors.text, fontSize: fontSize.md, fontWeight: '600' },
   legend: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     marginBottom: spacing.xl,
   },

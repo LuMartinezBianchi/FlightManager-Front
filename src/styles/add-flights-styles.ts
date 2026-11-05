@@ -35,6 +35,7 @@ export const styles = StyleSheet.create({
   },
   chooseIcon: { marginRight: spacing.sm },
   chooseButtonText: { color: colors.onAccent, fontSize: fontSize.md, fontWeight: 'bold' },
+  pickError: { color: colors.red, fontSize: fontSize.sm, marginTop: spacing.sm, textAlign: 'center' },
 
   // ---------- Plantilla ----------
   template: {

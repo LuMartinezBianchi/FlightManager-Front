@@ -1,32 +1,28 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, SectionList, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { sections } from '@/data/flights';
+import { agruparPorDia, coincideBusqueda, useVuelos, vuelosFuturos, type DiaVuelos } from '@/hooks/use-vuelos';
 import { styles } from '@/styles/edit-flights-styles';
 
 // Modificar vuelos: lista de vuelos programados, cada uno con su lapiz para editarlo.
 export default function EditFlightsScreen() {
   const [search, setSearch] = useState('');
+  const { vuelos } = useVuelos();
 
-  // Se queda con los vuelos que contienen lo buscado, y con los dias que tengan alguno
-  const filtered: typeof sections = [];
-  for (const section of sections) {
-    const data = section.data.filter((f) =>
-      (f.number + f.from + f.to).toLowerCase().includes(search.toLowerCase()),
-    );
-    if (data.length > 0) {
-      filtered.push({ title: section.title, data: data });
-    }
-  }
+  // Solo los vuelos que todavia no pasaron; la busqueda (por numero, ruta o dia) filtra entre ellos
+  const filtered: DiaVuelos[] = useMemo(
+    () => agruparPorDia(vuelosFuturos(vuelos).filter((v) => coincideBusqueda(v, search))),
+    [vuelos, search],
+  );
 
   return (
     <View style={styles.screen}>
       <SectionList
         sections={filtered}
-        keyExtractor={(item) => item.number}
+        keyExtractor={(item) => `${item.number}-${item.date}`}
         style={styles.list}
         ListHeaderComponent={
           <View style={styles.searchBox}>
@@ -35,7 +31,7 @@ export default function EditFlightsScreen() {
               style={styles.searchInput}
               onChangeText={setSearch}
               value={search}
-              placeholder="Buscar por n.º de vuelo o ruta"
+              placeholder="Buscar por n.º, ruta o día (24/08/2026)"
             />
           </View>
         }
@@ -50,7 +46,10 @@ export default function EditFlightsScreen() {
               <Text style={styles.aircraft}>{item.aircraft}</Text>
             </View>
 
-            <Pressable style={styles.editButton} onPress={() => router.push('/edit-flight')}>
+            <Pressable
+              style={styles.editButton}
+              onPress={() => router.push({ pathname: '/edit-flight', params: { number: item.number, date: item.date } })}
+            >
               <Ionicons name="pencil" size={16} color={colors.cyan} />
             </Pressable>
           </View>
