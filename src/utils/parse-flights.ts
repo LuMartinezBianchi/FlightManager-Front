@@ -121,14 +121,22 @@ function isValidCalendarDate({ year, month, day }: CalendarDate): boolean {
   return day <= daysInMonth;
 }
 
+// Las fechas salen siempre como "AAAA-MM-DD", el formato que usa la API.
 function formatCalendarDate({ year, month, day }: CalendarDate): string {
-  return `${pad2(day)}/${pad2(month)}/${year}`;
+  return `${year}-${pad2(month)}-${pad2(day)}`;
 }
 
-// Acepta "24/08/2026", "24-08-2026" y "24 Ago 2026" / "01-Feb-2026" (mes en
-// espanol o ingles, 3 letras).
+// Acepta "2026-08-24", "24/08/2026", "24-08-2026" y "24 Ago 2026" / "01-Feb-2026"
+// (mes en espanol o ingles, 3 letras).
 function parseDateText(raw: string): CalendarDate | null {
   const trimmed = raw.trim();
+
+  const iso = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    const calendarDate = { year: Number(iso[1]), month: Number(iso[2]), day: Number(iso[3]) };
+    return isValidCalendarDate(calendarDate) ? calendarDate : null;
+  }
+
   const match = trimmed.match(/^(\d{1,2})[\/\-. ]+([A-Za-zÀ-ſ]+|\d{1,2})[\/\-. ]+(\d{4})$/);
   if (!match) return null;
 

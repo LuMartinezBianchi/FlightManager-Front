@@ -17,14 +17,6 @@ export type Vuelo = {
 // Lo que se manda para guardar un vuelo nuevo. Avion y duracion son opcionales.
 export type NuevoVuelo = Omit<Vuelo, 'duration' | 'aircraft'> & { duration?: string; aircraft?: string };
 
-// Convierte "24/08/2026" (como se escribe o como sale del parser) a "2026-08-24".
-export function toIsoDate(texto: string): string {
-  const match = texto.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!match) return texto.trim();
-  const [, dia, mes, anio] = match;
-  return `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
-}
-
 // Arma el mensaje cuando el back rechaza el guardado: vuelos repetidos, fila con su motivo, o el error general.
 async function mensajeDeError(response: Response): Promise<Error> {
   const body = await response.json();

@@ -13,16 +13,16 @@ export type FormularioVuelo = {
 };
 
 const NUMERO = /^[A-Z0-9]{3,8}$/;
-const FECHA = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+const FECHA = /^(\d{4})-(\d{2})-(\d{2})$/;
 const HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
 const IATA = /^[A-Z]{3}$/;
 
 function fechaValida(texto: string) {
   const match = texto.match(FECHA);
   if (!match) return false;
-  const dia = Number(match[1]);
+  const anio = Number(match[1]);
   const mes = Number(match[2]);
-  const anio = Number(match[3]);
+  const dia = Number(match[3]);
   const fecha = new Date(anio, mes - 1, dia);
   return fecha.getDate() === dia && fecha.getMonth() === mes - 1;
 }
@@ -44,7 +44,7 @@ export function validarVueloManual(form: FormularioVuelo, iatasCargados: Set<str
 
   const date = form.date.trim();
   if (!date) errores.date = 'Ingresá la fecha';
-  else if (!fechaValida(date)) errores.date = 'Fecha inválida (DD/MM/AAAA)';
+  else if (!fechaValida(date)) errores.date = 'Fecha inválida (AAAA-MM-DD)';
 
   const from = form.from.trim().toUpperCase();
   const to = form.to.trim().toUpperCase();

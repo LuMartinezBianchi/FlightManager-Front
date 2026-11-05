@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import { createProgramacion } from '@/api/programacion';
-import { createVuelos, toIsoDate } from '@/api/vuelos';
+import { createVuelos } from '@/api/vuelos';
 import { colors } from '@/constants/theme';
 import { type DutyType, type ParsedDuty } from '@/data/flights';
 import { styles } from '@/styles/import-preview-styles';
@@ -98,7 +98,7 @@ export default function ImportPreviewScreen() {
       await createProgramacion(
         flights
           .filter((duty) => !duty.error && duty.dutyType !== 'vuelo')
-          .map((duty) => ({ date: toIsoDate(duty.date), type: duty.dutyType })),
+          .map((duty) => ({ date: duty.date, type: duty.dutyType })),
       );
 
       // dias con vuelo
@@ -108,7 +108,7 @@ export default function ImportPreviewScreen() {
             ? [
                 {
                   number: duty.flight.number,
-                  date: toIsoDate(duty.date),
+                  date: duty.date,
                   from: duty.flight.from,
                   to: duty.flight.to,
                   dep: duty.flight.dep,

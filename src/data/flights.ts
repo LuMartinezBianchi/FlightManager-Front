@@ -16,7 +16,7 @@ export type DutyType = 'vuelo' | 'deadhead' | 'reserva' | 'franco' | 'sin_asigna
 // se completa `flight`; si no, es un dia sin vuelo y `flight` queda vacio.
 export type ParsedDuty = {
   id: string;
-  date: string; // "dd/mm/yyyy"
+  date: string; // "yyyy-mm-dd"
   dutyType: DutyType;
   flight?: Flight;
   error?: string;

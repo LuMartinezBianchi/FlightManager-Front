@@ -5,7 +5,7 @@ import { Pressable, StyleProp, Text, TextInput, View, ViewStyle } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchAeropuertos } from '@/api/aeropuertos';
-import { createVuelos, toIsoDate } from '@/api/vuelos';
+import { createVuelos } from '@/api/vuelos';
 import { colors } from '@/constants/theme';
 import { styles } from '@/styles/add-flight-manual-styles';
 import { type FormularioVuelo, validarVueloManual } from '@/utils/validar-vuelo-manual';
@@ -66,7 +66,7 @@ export default function AddFlightManualScreen() {
       await createVuelos([
         {
           number: form.number.trim().toUpperCase(),
-          date: toIsoDate(form.date),
+          date: form.date.trim(),
           from: form.from.trim().toUpperCase(),
           to: form.to.trim().toUpperCase(),
           dep: form.dep.trim(),
@@ -120,7 +120,7 @@ export default function AddFlightManualScreen() {
 
         <View style={styles.row}>
           {campo('number', 'N.º de vuelo', { placeholder: 'Ej: AR1204', mitad: 'izquierda' })}
-          {campo('date', 'Fecha', { placeholder: 'DD/MM/AAAA', mitad: 'derecha' })}
+          {campo('date', 'Fecha', { placeholder: 'AAAA-MM-DD', mitad: 'derecha' })}
         </View>
 
         <View style={styles.row}>

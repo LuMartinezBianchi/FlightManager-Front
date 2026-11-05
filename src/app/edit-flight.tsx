@@ -13,12 +13,6 @@ import { type FormularioVuelo, validarVueloManual } from '@/utils/validar-vuelo-
 
 const alerta = { backgroundColor: colors.redSoft, borderRadius: 8, padding: 10, marginBottom: 8 };
 
-// "2026-08-24" -> "24/08/2026", el formato que pide el formulario
-function aFechaFormulario(iso: string) {
-  const [anio, mes, dia] = iso.split('-');
-  return `${dia}/${mes}/${anio}`;
-}
-
 // Editar los datos de un vuelo. Recibe numero y fecha por parametro desde Modificar vuelos.
 export default function EditFlightScreen() {
   const { number, date } = useLocalSearchParams<{ number?: string; date?: string }>();
@@ -40,7 +34,7 @@ export default function EditFlightScreen() {
 function EditForm({ vuelo }: { vuelo: Vuelo }) {
   const [form, setForm] = useState<FormularioVuelo>({
     number: vuelo.number,
-    date: aFechaFormulario(vuelo.date),
+    date: vuelo.date,
     from: vuelo.from,
     to: vuelo.to,
     dep: vuelo.dep,
@@ -81,12 +75,11 @@ function EditForm({ vuelo }: { vuelo: Vuelo }) {
     setGuardando(true);
     setErrorGuardado(null);
     try {
-      const [anio, mes, dia] = [form.date.slice(6, 10), form.date.slice(3, 5), form.date.slice(0, 2)];
       await updateVuelo(
         { number: vuelo.number, date: vuelo.date },
         {
           number: form.number.trim().toUpperCase(),
-          date: `${anio}-${mes}-${dia}`,
+          date: form.date.trim(),
           from: form.from.trim().toUpperCase(),
           to: form.to.trim().toUpperCase(),
           dep: form.dep.trim(),
