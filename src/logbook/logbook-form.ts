@@ -54,7 +54,7 @@ function texto(min: number, max: number) {
     value.length >= min && value.length <= max ? null : `Entre ${min} y ${max} caracteres`;
 }
 
-// Campos que el piloto tiene que completar. Los tiempos y la firma son opcionales para guardar, pero si se cargan tienen que ser validos.
+// Campos que el piloto tiene que completar. La firma es obligatoria (sin ella no se envia). Los tiempos son opcionales para guardar, pero si se cargan tienen que ser validos.
 export const sections: Section[] = [
   {
     title: 'Itinerario',
@@ -152,7 +152,7 @@ export const sections: Section[] = [
   },
   {
     title: 'Firma',
-    rows: [[{ key: 'firma', label: 'Firma del titular', kind: 'signature' }]],
+    rows: [[{ key: 'firma', label: 'Firma del titular', required: true, kind: 'signature' }]],
   },
 ];
 
@@ -200,7 +200,7 @@ export function validateLogbook(form: Record<string, string>): Record<string, st
 
 // ---------- Estado de la hoja de cada vuelo ----------
 
-// rojo: sin hoja guardada · amarillo: solo lo obligatorio · verde: hoja completa
+// rojo: sin hoja guardada (o falta algo obligatorio, firma incluida) · amarillo: solo lo obligatorio · verde: hoja completa
 export type EstadoLibro = 'rojo' | 'amarillo' | 'verde';
 
 const vacio = (hoja: Record<string, string>, key: string) => !(hoja[key] ?? '').trim();
@@ -221,8 +221,7 @@ export function estadoLibro(hoja: Record<string, string> | undefined): EstadoLib
   const completa =
     algunoCargado(hoja, TRAVESIA_O_SOBRE) &&
     !vacio(hoja, 'aterrizajes') &&
-    algunoCargado(hoja, DISCRIMINACION) &&
-    !vacio(hoja, 'firma');
+    algunoCargado(hoja, DISCRIMINACION);
   return completa ? 'verde' : 'amarillo';
 }
 

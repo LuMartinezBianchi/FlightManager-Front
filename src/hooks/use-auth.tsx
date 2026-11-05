@@ -4,8 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { cerrarSesionApi, iniciarSesionApi, registrar } from '@/api/auth';
 import { setAlVencer, setToken } from '@/api/sesion';
 
-// Estado de la sesion para toda la app (Context): quien tenga un token esta "adentro".
-// El token se guarda en SecureStore (almacenamiento cifrado del celular) para no pedir login cada vez que se abre la app.
+
 const CLAVE_TOKEN = 'token';
 
 type Auth = {

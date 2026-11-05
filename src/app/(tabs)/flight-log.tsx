@@ -18,7 +18,7 @@ const STATUS_STYLE = {
 } satisfies { [key in EstadoLibro]: object };
 
 // Pantalla 4: Libro de vuelo. Una tarjeta por cada vuelo que ya paso, con el borde segun lo completa que esta su hoja:
-// rojo (sin hoja), amarillo (solo lo obligatorio) o verde (hoja completa y firmada).
+// rojo (sin hoja), amarillo (lo obligatorio, firma incluida) o verde (hoja completa).
 // Se seleccionan registros para exportar, o se pasa al modo edicion para cargar/modificar uno.
 
 export default function FlightLogScreen() {
