@@ -1,5 +1,6 @@
 // Llamadas a la API de vuelos (los cargados por el parser o a mano).
 import { API_URL } from './config';
+import { fetchConSesion } from './sesion';
 
 export type Vuelo = {
   number: string;
@@ -32,7 +33,7 @@ async function mensajeDeError(response: Response): Promise<Error> {
 
 // GET /api/vuelos: lista de vuelos.
 export async function fetchVuelos(): Promise<Vuelo[]> {
-  const response = await fetch(`${API_URL}/api/vuelos`);
+  const response = await fetchConSesion(`${API_URL}/api/vuelos`);
 
   if (!response.ok) {
     throw new Error('No se pudo cargar los vuelos');
@@ -43,7 +44,7 @@ export async function fetchVuelos(): Promise<Vuelo[]> {
 
 // POST /api/vuelos: guarda todos los vuelos juntos (si uno falla, no se guarda ninguno).
 export async function createVuelos(vuelos: NuevoVuelo[]): Promise<void> {
-  const response = await fetch(`${API_URL}/api/vuelos`, {
+  const response = await fetchConSesion(`${API_URL}/api/vuelos`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(vuelos),
@@ -54,7 +55,7 @@ export async function createVuelos(vuelos: NuevoVuelo[]): Promise<void> {
 
 // PUT /api/vuelos/:number/:fecha: reemplaza el vuelo identificado por numero + fecha original.
 export async function updateVuelo(original: { number: string; date: string }, vuelo: NuevoVuelo): Promise<void> {
-  const response = await fetch(`${API_URL}/api/vuelos/${encodeURIComponent(original.number)}/${original.date}`, {
+  const response = await fetchConSesion(`${API_URL}/api/vuelos/${encodeURIComponent(original.number)}/${original.date}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(vuelo),
@@ -65,7 +66,7 @@ export async function updateVuelo(original: { number: string; date: string }, vu
 
 // DELETE /api/vuelos/:number/:fecha: borra el vuelo identificado por numero + fecha.
 export async function deleteVuelo(vuelo: { number: string; date: string }): Promise<void> {
-  const response = await fetch(`${API_URL}/api/vuelos/${encodeURIComponent(vuelo.number)}/${vuelo.date}`, {
+  const response = await fetchConSesion(`${API_URL}/api/vuelos/${encodeURIComponent(vuelo.number)}/${vuelo.date}`, {
     method: 'DELETE',
   });
 

@@ -3,6 +3,7 @@
 import { type DutyType } from '@/data/flights';
 
 import { API_URL } from './config';
+import { fetchConSesion } from './sesion';
 
 export type DiaProgramacion = {
   // YYYY-MM-DD
@@ -12,7 +13,7 @@ export type DiaProgramacion = {
 
 // GET /api/programacion: lista de dias con su tipo.
 export async function fetchProgramacion(): Promise<DiaProgramacion[]> {
-  const response = await fetch(`${API_URL}/api/programacion`);
+  const response = await fetchConSesion(`${API_URL}/api/programacion`);
 
   if (!response.ok) {
     throw new Error('No se pudo cargar la programación');
@@ -23,7 +24,7 @@ export async function fetchProgramacion(): Promise<DiaProgramacion[]> {
 
 // POST /api/programacion: guarda el tipo de cada dia (si el dia ya existe, le cambia el tipo).
 export async function createProgramacion(dias: DiaProgramacion[]): Promise<void> {
-  const response = await fetch(`${API_URL}/api/programacion`, {
+  const response = await fetchConSesion(`${API_URL}/api/programacion`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dias),

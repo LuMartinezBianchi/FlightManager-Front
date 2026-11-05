@@ -7,9 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, Tone, tones } from '@/constants/theme';
 import { buildCalendar, type DayStatus } from '@/data/calendar';
 import { flightStats, hasFlown } from '@/data/flight-log';
+import { useAuth } from '@/hooks/use-auth';
 import { claveVuelo, useLibro } from '@/hooks/use-libro';
 import { useProgramacion } from '@/hooks/use-programacion';
 import { proximoVuelo, useVuelos } from '@/hooks/use-vuelos';
+import { styles as authStyles } from '@/styles/auth-styles';
 import { styles } from '@/styles/index-styles';
 
 // Calendario. Cada dia cargado usa el color de su tipo de actividad (vuelo, deadhead, reserva, franco o sin asignar).
@@ -44,6 +46,7 @@ function isoDate(year: number, month: number, day: number) {
 export default function HomeScreen() {
   const [month, setMonth] = useState(new Date().getMonth()); // 0 = enero
   const [year, setYear] = useState(new Date().getFullYear());
+  const { cerrarSesion } = useAuth();
   const { vuelos } = useVuelos();
   const { dias } = useProgramacion();
   const { hojas } = useLibro();
@@ -203,6 +206,10 @@ export default function HomeScreen() {
             </View>
           ))}
         </View>
+
+        <Pressable style={authStyles.logoutButton} onPress={cerrarSesion}>
+          <Text style={authStyles.logoutText}>Cerrar sesión</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

@@ -3,6 +3,7 @@ import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 import { API_URL } from './config';
+import { fetchConSesion } from './sesion';
 
 // number + date identifican el vuelo; el resto son los campos del formulario (todo texto).
 export type HojaLibro = Record<string, string>;
@@ -19,7 +20,7 @@ export class LibroError extends Error {
 
 // GET /api/libro: todas las hojas guardadas.
 export async function fetchLibro(): Promise<HojaLibro[]> {
-  const response = await fetch(`${API_URL}/api/libro`);
+  const response = await fetchConSesion(`${API_URL}/api/libro`);
 
   if (!response.ok) {
     throw new Error('No se pudo cargar el libro de vuelo');
@@ -30,7 +31,7 @@ export async function fetchLibro(): Promise<HojaLibro[]> {
 
 // PUT /api/libro/:number/:fecha: guarda (o reemplaza) la hoja del vuelo.
 export async function saveHoja(vuelo: { number: string; date: string }, hoja: HojaLibro): Promise<void> {
-  const response = await fetch(`${API_URL}/api/libro/${encodeURIComponent(vuelo.number)}/${vuelo.date}`, {
+  const response = await fetchConSesion(`${API_URL}/api/libro/${encodeURIComponent(vuelo.number)}/${vuelo.date}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(hoja),
@@ -44,7 +45,7 @@ export async function saveHoja(vuelo: { number: string; date: string }, hoja: Ho
 
 // POST /api/libro/exportar: pide el .xlsx de los vuelos elegidos, lo guarda y abre el menu de compartir.
 export async function exportLibro(vuelos: { number: string; date: string }[]): Promise<void> {
-  const response = await fetch(`${API_URL}/api/libro/exportar`, {
+  const response = await fetchConSesion(`${API_URL}/api/libro/exportar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(vuelos),
