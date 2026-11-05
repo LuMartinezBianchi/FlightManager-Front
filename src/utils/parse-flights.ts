@@ -310,11 +310,13 @@ export function parseFlights(base64: string): ParseFlightsResult {
   if (rows.length === 0) return { duties: [] };
 
   const roles = matchColumnRoles(rows[0]);
-  // El archivo tiene que traer todas las columnas; si falta alguna, no se carga nada.
-  // La ruta puede venir como una columna "ruta" o como dos columnas "origen" y "destino": alcanza con una de las dos formas.
+  // El archivo tiene que traer todas las columnas; si falta alguna, no se carga nada. Dos excepciones:
+  // - avion y tripulacion son opcionales: pueden estar o no estar.
+  // - la ruta puede venir como una columna "ruta" o como dos columnas "origen" y "destino": alcanza con una de las dos formas.
   const tieneRuta = roles.route !== -1;
   const tieneOrigenDestino = roles.origin !== -1 && roles.destination !== -1;
   const faltantes = (Object.keys(HEADER_ALIASES) as ColumnRole[]).filter((role) => {
+    if (role === 'aircraft' || role === 'crew') return false;
     if (role === 'route' || role === 'origin' || role === 'destination') return false;
     return roles[role] === -1;
   });
